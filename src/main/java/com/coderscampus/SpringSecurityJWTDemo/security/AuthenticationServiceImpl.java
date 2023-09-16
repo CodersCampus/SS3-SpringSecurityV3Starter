@@ -1,5 +1,6 @@
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
+import com.coderscampus.SpringSecurityJWTDemo.domain.Authority;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,9 +34,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
-        var user = new User().firstName(request.firstName()).lastName(request.lastName())
-                .email(request.email()).password(passwordEncoder.encode(request.password()))
-                .role(Role.USER).build();
+        var user = new User()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .authority(Role.USER.name()).build();
+        request.authorityOpt().ifPresent(auth -> user.getAuthorities().add(new Authority(auth, user)));
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());

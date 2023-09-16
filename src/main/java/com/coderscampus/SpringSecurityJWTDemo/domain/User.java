@@ -1,22 +1,18 @@
 package com.coderscampus.SpringSecurityJWTDemo.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "users")
+
 public class User implements UserDetails {
     private static final long serialVersionUID = 2025389852147750927L;
     @Id
@@ -26,14 +22,19 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("user")
+    private List<Authority> authorities = new ArrayList<>();
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+    public Collection<Authority> getAuthorities() {
+        return authorities;
     }
 
-    
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -87,17 +88,42 @@ public class User implements UserDetails {
         this.email = email;
         return this;
     }
+
+    public User authority(String authority) {
+        Authority auth = new Authority(authority, this);
+        this.getAuthorities().add(auth);
+        return this;
+    }
     
     public User password(String password) {
         this.password = password;
         return this;
     }
     
-    public User role(Role role) {
-        this.role = role;
-        return this;
+    public void setId(Integer id) {
+        this.id = id;
     }
-    
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Integer getId() {
         return id;
     }
