@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.coderscampus.SpringSecurityJWTDemo.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,5 +35,17 @@ public class UserServiceImpl implements UserService {
     @Secured({"ROLE_ADMIN"})
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+    
+    public User registerUser(User user) {
+		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+//			throw new UserAlreadyExistsException("A user with this email already exists");
+			return null;
+		}
+		return userRepository.save(user);
+	}
+    
+    public Optional<User> findUserByEmail(String email) {
+    	return userRepository.findByEmail(email);
     }
 }
