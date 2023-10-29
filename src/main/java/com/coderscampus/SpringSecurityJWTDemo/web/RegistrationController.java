@@ -66,6 +66,7 @@ public class RegistrationController {
 //		}
 //	}
 	
+	
 	@PostMapping("/register")
 	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {
 	    Optional<User> existingUser = userService.findUserByEmail(user.getEmail());

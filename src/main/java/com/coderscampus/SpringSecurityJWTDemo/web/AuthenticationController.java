@@ -20,19 +20,20 @@ import com.coderscampus.SpringSecurityJWTDemo.dao.response.TokenRefreshResponse;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.security.AuthenticationService;
+import com.coderscampus.SpringSecurityJWTDemo.security.AuthenticationServiceImpl;
 import com.coderscampus.SpringSecurityJWTDemo.security.JwtService;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 //@RestController
-@Controller
 //@RequestMapping("/api/v1/auth")
+@Controller
 public class AuthenticationController {
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationService;
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
     
-    public AuthenticationController(AuthenticationService authenticationService, RefreshTokenService refreshTokenService, JwtService jwtService) {
+    public AuthenticationController(AuthenticationServiceImpl authenticationService, RefreshTokenService refreshTokenService, JwtService jwtService) {
         super();
         this.authenticationService = authenticationService;
         this.refreshTokenService = refreshTokenService;
@@ -47,10 +48,10 @@ public class AuthenticationController {
 		return "login";
 	}
     
-    @PostMapping("/signin")
 //    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request) {
 //        return ResponseEntity.ok(authenticationService.signin(request));
 //    }
+    @PostMapping("/signin")
     public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
     	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
     	
