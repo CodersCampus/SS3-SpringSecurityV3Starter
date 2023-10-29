@@ -1,6 +1,12 @@
 package com.coderscampus.SpringSecurityJWTDemo.web;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +18,15 @@ import com.coderscampus.SpringSecurityJWTDemo.dao.request.TokenRefreshRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.JwtAuthenticationResponse;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.TokenRefreshResponse;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
+import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.security.AuthenticationService;
 import com.coderscampus.SpringSecurityJWTDemo.security.JwtService;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
+import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
-@RestController
-@RequestMapping("/api/v1/auth")
+//@RestController
+@Controller
+//@RequestMapping("/api/v1/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final RefreshTokenService refreshTokenService;
@@ -29,15 +38,37 @@ public class AuthenticationController {
         this.refreshTokenService = refreshTokenService;
         this.jwtService = jwtService;
     }
+    
+    @Autowired
+    private UserServiceImpl userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody SignUpRequest request) {
-        return ResponseEntity.ok(authenticationService.signup(request));
-    }
-
+    @GetMapping("/signin")
+	public String getLogin (@ModelAttribute("user") User user) {
+		return "login";
+	}
+    
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request) {
-        return ResponseEntity.ok(authenticationService.signin(request));
+//    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request) {
+//        return ResponseEntity.ok(authenticationService.signin(request));
+//    }
+    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
+    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+    	
+    	if (existingUser.isPresent()) {
+            // User exists; proceed with authentication
+            JwtAuthenticationResponse authenticationResponse = authenticationService.signin(request);
+
+            if (authenticationResponse != null) {
+                // Authentication successful; you can proceed as needed
+                return "success"; // Redirect to a success page
+            } else {
+                // Handle unsuccessful authentication (e.g., wrong password)
+                return "error"; // Redirect to an error page
+            }
+        } else {
+            // Handle the case where the user does not exist
+            return "userNotExists"; // Redirect to a userNotExists page
+        }
     }
     
     @PostMapping("/refreshtoken")
