@@ -49,13 +49,13 @@ public class SecurityConfig {
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//                .formLogin(login -> {
-//		        	login.loginPage("/register");
-//		        	login.successForwardUrl("/success");
-//		        	login.failureForwardUrl("/error");
-//		        	login.permitAll();
-//		        });
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(login -> {
+		        	login.loginPage("/signin");
+		        	login.successForwardUrl("/success");
+		        	login.failureForwardUrl("/error");
+		        	login.permitAll();
+		        });
         return http.build();
     }
 
