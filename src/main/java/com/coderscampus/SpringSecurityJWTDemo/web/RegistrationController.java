@@ -57,7 +57,7 @@ public class RegistrationController {
 	
 	
 	@PostMapping("/register")
-	public ModelAndView processRegistration (User user) {
+	public ModelAndView processRegistration (User user, SignUpRequest request) {
 		user.setFirstName(user.getFirstName());
 		user.setLastName(user.getLastName());
 		user.setEmail(user.getEmail());
@@ -66,6 +66,7 @@ public class RegistrationController {
 		User savedUser = userService.registerUser(user);
 //		System.out.println(user.toString());
 		
+		JwtAuthenticationResponse processRequest = authenticationService.signup(request);
 		String accessToken = jwtService.generateToken(new HashMap<>(), savedUser);
 		RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
 		
@@ -73,9 +74,9 @@ public class RegistrationController {
 		
 		return modelAndView;
 		
+		
+		
 	}
-
-	
 	
 //	@PostMapping("/register")
 //	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {

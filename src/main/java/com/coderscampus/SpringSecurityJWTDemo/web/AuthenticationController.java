@@ -1,5 +1,6 @@
 package com.coderscampus.SpringSecurityJWTDemo.web;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignInRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignUpRequest;
@@ -70,6 +72,12 @@ public class AuthenticationController {
             // Handle the case where the user does not exist
             return "userNotExists"; // Redirect to a userNotExists page
         }
+    }
+    
+//    @PostMapping("/signin")
+    public ModelAndView authenticateLogin(@RequestBody User user) {
+    	Optional<User> loggedUser = userService.findUserByEmail(user.getEmail());
+    	String accessToken = jwtService.generateToken(new HashMap<>(), user.getEmail());
     }
     
     @PostMapping("/refreshtoken")
