@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignInRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignUpRequest;
@@ -77,7 +79,11 @@ public class AuthenticationController {
 //    @PostMapping("/signin")
     public ModelAndView authenticateLogin(@RequestBody User user) {
     	Optional<User> loggedUser = userService.findUserByEmail(user.getEmail());
-    	String accessToken = jwtService.generateToken(new HashMap<>(), user.getEmail());
+    	
+    	//need access token
+    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+    	
+    	return new ModelAndView(new RedirectView("/success"));
     }
     
     @PostMapping("/refreshtoken")
