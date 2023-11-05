@@ -56,51 +56,49 @@ public class RegistrationController {
 	}
 	
 	
-	@PostMapping("/register")
-	public ModelAndView processRegistration (User user, SignUpRequest request) {
-		user.setFirstName(user.getFirstName());
-		user.setLastName(user.getLastName());
-		user.setEmail(user.getEmail());
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		
-		User savedUser = userService.registerUser(user);
-//		System.out.println(user.toString());
-		
-		JwtAuthenticationResponse processRequest = authenticationService.signup(request);
-		String accessToken = jwtService.generateToken(new HashMap<>(), savedUser);
-		RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
-		
-		ModelAndView modelAndView = new ModelAndView(new RedirectView("/signin"));
-		
-		return modelAndView;
-		
-		
-		
-	}
-	
 //	@PostMapping("/register")
-//	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {
-//	    Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//	    logger.info("Processing registration for user: " + user.getEmail());
-//
-//	    if (existingUser.isPresent()) {
-//	    	logger.info("User already exists. Redirecting to userExists.");
-//	        // Redirect to the userExists page if a user with the same email exists
-//	        return "userExists";
-//	    } else {
-//	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
-//
-//	        if (signupResponse != null) {
-//	            // Successfully registered user, now proceed with authentication
-//	                logger.info("Successfully registered user. Redirecting to success.");
-//	                return "success";
-//	            } else {
-//	                // Handle the case where authentication is not successful
-//	            	logger.info("User registration failed. Redirecting to error.");
-//	                return "error";
-//	            }
-//	        }
-//	    }
+//	public ModelAndView processRegistration (User user, SignUpRequest request) {
+//		user.setFirstName(user.getFirstName());
+//		user.setLastName(user.getLastName());
+//		user.setEmail(user.getEmail());
+//		user.setPassword(passwordEncoder.encode(user.getPassword()));
+//		
+//		User savedUser = userService.registerUser(user);
+////		System.out.println(user.toString());
+//		
+//		JwtAuthenticationResponse processRequest = authenticationService.signup(request);
+//		String accessToken = jwtService.generateToken(new HashMap<>(), savedUser);
+//		RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
+//		
+//		ModelAndView modelAndView = new ModelAndView(new RedirectView("/signin"));
+//		
+//		return modelAndView;
+//		
+//	}
+	
+	@PostMapping("/register")
+	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {
+	    Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+	    logger.info("Processing registration for user: " + user.getEmail());
+
+	    if (existingUser.isPresent()) {
+	    	logger.info("User already exists. Redirecting to userExists.");
+	        // Redirect to the userExists page if a user with the same email exists
+	        return "userExists";
+	    } else {
+	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
+
+	        if (signupResponse != null) {
+	            // Successfully registered user, now proceed with authentication
+	                logger.info("Successfully registered user. Redirecting to success.");
+	                return "success";
+	            } else {
+	                // Handle the case where authentication is not successful
+	            	logger.info("User registration failed. Redirecting to error.");
+	                return "error";
+	            }
+	        }
+	    }
 	}
 
 //  @PostMapping("/signup")
