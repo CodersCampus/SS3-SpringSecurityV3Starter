@@ -55,37 +55,38 @@ public class AuthenticationController {
 //    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request) {
 //        return ResponseEntity.ok(authenticationService.signin(request));
 //    }
-//    @PostMapping("/signin")
-//    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
-//    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//    	
-//    	if (existingUser.isPresent()) {
-//            // User exists; proceed with authentication
-//            JwtAuthenticationResponse authenticationResponse = authenticationService.signin(request);
-//
-//            if (authenticationResponse != null) {
-//                // Authentication successful; you can proceed as needed
-//                return "success"; // Redirect to a success page
-//            } else {
-//                // Handle unsuccessful authentication (e.g., wrong password)
-//                return "error"; // Redirect to an error page
-//            }
-//        } else {
-//            // Handle the case where the user does not exist
-//            return "userNotExists"; // Redirect to a userNotExists page
-//        }
-//    }
     
     @PostMapping("/signin")
-    public ModelAndView authenticateLogin(@RequestBody User user, SignInRequest request) {
-    	Optional<User> loggedUser = userService.findUserByEmail(user.getEmail());
+    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
+    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
     	
-    	String accessToken = jwtService.generateToken(user);
-    	
-    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-    	
-    	return new ModelAndView(new RedirectView("/success"));
+    	if (existingUser.isPresent()) {
+            // User exists; proceed with authentication
+            JwtAuthenticationResponse authenticationResponse = authenticationService.signin(request);
+
+            if (authenticationResponse != null) {
+                // Authentication successful; you can proceed as needed
+                return "success"; // Redirect to a success page
+            } else {
+                // Handle unsuccessful authentication (e.g., wrong password)
+                return "error"; // Redirect to an error page
+            }
+        } else {
+            // Handle the case where the user does not exist
+            return "userNotExists"; // Redirect to a userNotExists page
+        }
     }
+    
+//    @PostMapping("/signin")
+//    public ModelAndView authenticateLogin(@RequestBody User user, SignInRequest request) {
+//    	Optional<User> loggedUser = userService.findUserByEmail(user.getEmail());
+//    	
+//    	String accessToken = jwtService.generateToken(user);
+//    	
+//    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+//    	
+//    	return new ModelAndView(new RedirectView("/success"));
+//    }
     
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(@RequestBody TokenRefreshRequest request) {

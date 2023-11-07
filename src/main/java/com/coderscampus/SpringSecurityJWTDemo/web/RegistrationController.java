@@ -56,26 +56,6 @@ public class RegistrationController {
 	}
 	
 	
-//	@PostMapping("/register")
-//	public ModelAndView processRegistration (User user, SignUpRequest request) {
-//		user.setFirstName(user.getFirstName());
-//		user.setLastName(user.getLastName());
-//		user.setEmail(user.getEmail());
-//		user.setPassword(passwordEncoder.encode(user.getPassword()));
-//		
-//		User savedUser = userService.registerUser(user);
-////		System.out.println(user.toString());
-//		
-//		JwtAuthenticationResponse processRequest = authenticationService.signup(request);
-//		String accessToken = jwtService.generateToken(new HashMap<>(), savedUser);
-//		RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser.getId());
-//		
-//		ModelAndView modelAndView = new ModelAndView(new RedirectView("/signin"));
-//		
-//		return modelAndView;
-//		
-//	}
-	
 	@PostMapping("/register")
 	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {
 	    Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
@@ -87,7 +67,7 @@ public class RegistrationController {
 	        return "userExists";
 	    } else {
 	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
-
+			
 	        if (signupResponse != null) {
 	            // Successfully registered user, now proceed with authentication
 	                logger.info("Successfully registered user. Redirecting to success.");
