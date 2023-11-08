@@ -16,6 +16,7 @@ import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,10 +38,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
+        Cookie accessTokenCookie = null;
+        Cookie refreshTokenCookie = null;
+        
+        if (request.getCookies() != null) {
+        	for (Cookie cookie : request.getCookies()) {
+        		if (cookie.getName().equals("accessToken")) {
+        			accessTokenCookie = cookie;
+        		} else if (cookie.getName().equals("refreshToken")) {
+        			refreshTokenCookie = cookie;
+        		}
+        	}
+        }
+        
         if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+        
+        if (accessTokenCookie != null) {
+        	String token = accessTokenCookie.getValue();
+        }
+        
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUserName(jwt);
         if (StringUtils.isNotEmpty(userEmail)
