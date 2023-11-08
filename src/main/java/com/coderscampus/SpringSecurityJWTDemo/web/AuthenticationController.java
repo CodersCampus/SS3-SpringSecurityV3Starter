@@ -52,10 +52,14 @@ public class AuthenticationController {
 		return "login";
 	}
     
-//    @PostMapping("/signin")
-//    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request) {
-//        return ResponseEntity.ok(authenticationService.signin(request));
-//    }
+    @PostMapping("/signin")
+    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
+    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+    	User loggedUser = ((User) userService).loadUserByUsername(user.getUsername());
+    	String accessToken = jwtService.generateToken(user);
+    	
+        return ResponseEntity.ok(authenticationService.signin(request));
+    }
     
 //    @PostMapping("/signin")
 //    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {

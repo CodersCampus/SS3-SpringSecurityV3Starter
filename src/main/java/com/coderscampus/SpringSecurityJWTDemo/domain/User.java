@@ -132,4 +132,9 @@ public class User implements UserDetails {
     public User build () {
         return this;
     }
+
+	public User loadUserByUsername(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
