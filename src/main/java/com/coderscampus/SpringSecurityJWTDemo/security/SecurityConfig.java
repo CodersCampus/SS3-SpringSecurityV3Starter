@@ -42,7 +42,7 @@ public class SecurityConfig {
                                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                                         .requestMatchers("/products").authenticated()
-                                        	.requestMatchers("/signin").permitAll()
+//                                        	.requestMatchers("/signin").permitAll()
                                         	.requestMatchers("/register").permitAll()
                                         	.anyRequest().permitAll()
                         )
@@ -52,8 +52,8 @@ public class SecurityConfig {
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {
 		        	login.loginPage("/signin");
-//		        	login.successForwardUrl("/success");
-//		        	login.failureForwardUrl("/error");
+		        	login.successForwardUrl("/success");
+		        	login.failureForwardUrl("/error");
 		        	login.permitAll();
 		        });
         return http.build();
