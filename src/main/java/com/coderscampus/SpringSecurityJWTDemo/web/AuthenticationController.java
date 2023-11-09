@@ -52,19 +52,18 @@ public class AuthenticationController {
 		return "login";
 	}
     
-    @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
-    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-    	
-    	User loggedUser = (User) userService.userDetailsService().loadUserByUsername(user.getUsername());
-    	
-    	// moving the below to the SecurityConfig SecFilterChain:
-    	String accessToken = jwtService.generateToken(loggedUser);
-    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(loggedUser.getId());
-    	
-//        return ResponseEntity.ok(authenticationService.signin(request));
-    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
-    }
+//    @PostMapping("/signin")
+//    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
+//    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+//    	
+//    	User loggedUser = (User) userService.userDetailsService().loadUserByUsername(user.getUsername());
+//    	
+//    	// moving the below to the SecurityConfig SecFilterChain:
+//    	String accessToken = jwtService.generateToken(loggedUser);
+//    	
+////        return ResponseEntity.ok(authenticationService.signin(request));
+//    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
+//    }
     
 //    @PostMapping("/signin")
 //    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
