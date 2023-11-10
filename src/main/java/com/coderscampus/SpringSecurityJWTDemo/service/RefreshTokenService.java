@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.coderscampus.SpringSecurityJWTDemo.dao.request.RefreshTokenRequest;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
 import com.coderscampus.SpringSecurityJWTDemo.repository.RefreshTokenRepository;
 import com.coderscampus.SpringSecurityJWTDemo.repository.UserRepository;
@@ -53,4 +54,9 @@ public class RefreshTokenService {
   public int deleteByUserId(Integer userId) {
     return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
   }
+
+public String createNewAccessToken(RefreshTokenRequest refreshTokenRequest) {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

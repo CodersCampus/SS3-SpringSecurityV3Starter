@@ -1,8 +1,17 @@
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +23,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.coderscampus.SpringSecurityJWTDemo.dao.request.RefreshTokenRequest;
+import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
+import com.coderscampus.SpringSecurityJWTDemo.domain.User;
+import com.coderscampus.SpringSecurityJWTDemo.repository.RefreshTokenRepository;
+import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
@@ -34,6 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
         this.userService = userService;
     }
+    
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -42,6 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
+        
         Cookie accessTokenCookie = null;
         Cookie refreshTokenCookie = null;
         
@@ -75,29 +93,38 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        	}
 //        }
 //        filterChain.doFilter(request, response);
+        int loginAttempt = 0;
+        String token = accessTokenCookie.getValue();
         
-        if (accessTokenCookie != null) {
-        	try {
-				String token = accessTokenCookie.getValue();
-				String subject = jwtService.extractUserName(token);
-				
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				if (StringUtils.hasText(subject) && authentication == null) {
-					UserDetails userDetails = userService.userDetailsService().loadUserByUsername(subject);
-					
-					if (jwtService.isTokenValid(token, userDetails)) {
-						SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-						UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken (userDetails,
-								userDetails.getPassword(),
-								userDetails.getAuthorities());
-						securityContext.setAuthentication(authToken);
-						SecurityContextHolder.setContext(securityContext);
-					}
-				}
-			} catch (ExpiredJwtException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
-			}
+        while (loginAttempt <= 5) {
+        	
+        	if (accessTokenCookie != null) {
+        		try {
+        			String subject = jwtService.extractUserName(token);
+        			
+        			
+        			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        			if (StringUtils.hasText(subject) && authentication == null) {
+        				UserDetails userDetails = userService.userDetailsService().loadUserByUsername(subject);
+        				
+        				if (jwtService.isTokenValid(token, userDetails)) {
+        					SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken (userDetails,
+        							userDetails.getPassword(),
+        							userDetails.getAuthorities());
+        					securityContext.setAuthentication(authToken);
+        					SecurityContextHolder.setContext(securityContext);
+        					
+        					// if successful login occurs:
+        					break;
+        				}
+        			}
+        		} catch (ExpiredJwtException e) {
+        			token = refreshTokenService.createNewAccessToken(new RefreshTokenRequest(refreshTokenCookie.getValue()));
+        			e.printStackTrace();
+        		}
+        		loginAttempt++;
+        	}
         }
         filterChain.doFilter(request, response);
     }

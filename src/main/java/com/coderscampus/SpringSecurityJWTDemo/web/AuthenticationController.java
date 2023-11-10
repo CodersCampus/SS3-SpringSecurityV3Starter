@@ -18,7 +18,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignInRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignUpRequest;
-import com.coderscampus.SpringSecurityJWTDemo.dao.request.TokenRefreshRequest;
+import com.coderscampus.SpringSecurityJWTDemo.dao.request.RefreshTokenRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.JwtAuthenticationResponse;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.TokenRefreshResponse;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
@@ -52,18 +52,18 @@ public class AuthenticationController {
 		return "login";
 	}
     
-//    @PostMapping("/signin")
-//    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
-//    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//    	
-//    	User loggedUser = (User) userService.userDetailsService().loadUserByUsername(user.getUsername());
-//    	
-//    	// moving the below to the SecurityConfig SecFilterChain:
-//    	String accessToken = jwtService.generateToken(loggedUser);
-//    	
-////        return ResponseEntity.ok(authenticationService.signin(request));
-//    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
-//    }
+    @PostMapping("/signin")
+    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
+    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+    	
+    	User loggedUser = (User) userService.userDetailsService().loadUserByUsername(user.getUsername());
+    	
+    	// moving the below to the SecurityConfig SecFilterChain:
+    	String accessToken = jwtService.generateToken(loggedUser);
+    	
+//        return ResponseEntity.ok(authenticationService.signin(request));
+    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
+    }
     
 //    @PostMapping("/signin")
 //    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
@@ -98,7 +98,7 @@ public class AuthenticationController {
 //    }
     
     @PostMapping("/refreshtoken")
-    public ResponseEntity<?> refreshtoken(@RequestBody TokenRefreshRequest request) {
+    public ResponseEntity<?> refreshtoken(@RequestBody RefreshTokenRequest request) {
       String requestRefreshToken = request.refreshToken();
 
       return refreshTokenService.findByToken(requestRefreshToken)

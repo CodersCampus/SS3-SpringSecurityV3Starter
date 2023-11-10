@@ -72,7 +72,7 @@ public class SecurityConfig {
 		        	login.loginPage("/signin");
 //		        	login.successForwardUrl("/success");
 //		        	login.failureUrl("/failure"); // this can be linked to a failure message on the failure template
-		        	login.failureForwardUrl("/error");
+//		        	login.failureForwardUrl("/error");
 		        	login.successHandler(new AuthenticationSuccessHandler() {
 						
 						@Override
