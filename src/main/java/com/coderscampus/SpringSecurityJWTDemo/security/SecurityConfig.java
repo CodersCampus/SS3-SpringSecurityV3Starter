@@ -1,6 +1,7 @@
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
+import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -37,7 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserService userService;
+    private final UserServiceImpl userService;
     
     @Autowired
     private JwtServiceImpl jwtService;
@@ -45,7 +47,7 @@ public class SecurityConfig {
     @Autowired
     private RefreshTokenService refreshTokenService;
     
-    public SecurityConfig (JwtAuthenticationFilter jwtAuthenticationFilter, UserService userService) {
+    public SecurityConfig (JwtAuthenticationFilter jwtAuthenticationFilter, UserServiceImpl userService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userService = userService;
     }
@@ -64,7 +66,7 @@ public class SecurityConfig {
                                         	.requestMatchers("/register").permitAll()
                                         	.anyRequest().permitAll()
                         )
-                .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
+//                .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -80,7 +82,7 @@ public class SecurityConfig {
 								Authentication authentication) throws IOException, ServletException {
 							
 							User user = (User) authentication.getPrincipal();
-					    	String accessToken = jwtService.generateToken(user);
+					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
 					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 							
 					    	Cookie accessCookie = new Cookie("accessToken", accessToken);
