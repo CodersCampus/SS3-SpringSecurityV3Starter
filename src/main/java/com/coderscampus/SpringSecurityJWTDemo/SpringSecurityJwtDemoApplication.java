@@ -12,5 +12,6 @@ public class SpringSecurityJwtDemoApplication {
 /*
  * to check out: https://github.com/ekim197711/springboot-security-2022
  * https://github.com/danvega/jpa-security
+ * https://www.sliderrevolution.com/resources/css-animated-background/
  */
 }

@@ -48,4 +48,8 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserByEmail(String email) {
     	return userRepository.findByEmail(email);
     }
+    
+    public Optional<User> findUserById(Integer userId) {
+    	return userRepository.findById(userId);
+    }
 }
