@@ -17,13 +17,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignInRequest;
-import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignUpRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.RefreshTokenRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.JwtAuthenticationResponse;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.TokenRefreshResponse;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
-import com.coderscampus.SpringSecurityJWTDemo.security.AuthenticationService;
 import com.coderscampus.SpringSecurityJWTDemo.security.AuthenticationServiceImpl;
 import com.coderscampus.SpringSecurityJWTDemo.security.JwtService;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
@@ -60,6 +58,7 @@ public class AuthenticationController {
 //    	
 //    	// moving the below to the SecurityConfig SecFilterChain:
 //    	String accessToken = jwtService.generateToken(loggedUser);
+//    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(new HashMap<>(), loggedUser);
 //    	
 ////        return ResponseEntity.ok(authenticationService.signin(request));
 //    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));

@@ -40,19 +40,19 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserServiceImpl userService;
-    
-    @Autowired
     private JwtServiceImpl jwtService;
-    
-    @Autowired
     private RefreshTokenService refreshTokenService;
     
-    public SecurityConfig (JwtAuthenticationFilter jwtAuthenticationFilter, UserServiceImpl userService) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.userService = userService;
-    }
-    
-    @Bean
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserServiceImpl userService,
+			JwtServiceImpl jwtService, RefreshTokenService refreshTokenService) {
+		super();
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+		this.userService = userService;
+		this.jwtService = jwtService;
+		this.refreshTokenService = refreshTokenService;
+	}
+
+	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
 //        .authorizeHttpRequests(request -> request.requestMatchers("**").permitAll().anyRequest().authenticated())
@@ -72,27 +72,27 @@ public class SecurityConfig {
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {
 		        	login.loginPage("/signin");
-//		        	login.successForwardUrl("/success");
+		        	login.successForwardUrl("/success");
 //		        	login.failureUrl("/failure"); // this can be linked to a failure message on the failure template
 //		        	login.failureForwardUrl("/error");
-		        	login.successHandler(new AuthenticationSuccessHandler() {
-						
-						@Override
-						public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-								Authentication authentication) throws IOException, ServletException {
-							
-							User user = (User) authentication.getPrincipal();
-					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
-					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-							
-					    	Cookie accessCookie = new Cookie("accessToken", accessToken);
-					    	Cookie refreshCookie = new Cookie("refreshToken", refreshToken.getToken());
-					    	
-					    	response.addCookie(accessCookie);
-					    	response.addCookie(refreshCookie);
-					    	response.sendRedirect("/products");
-						}
-					});
+//		        	login.successHandler(new AuthenticationSuccessHandler() {
+//						
+//						@Override
+//						public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+//								Authentication authentication) throws IOException, ServletException {
+//							
+//							User user = (User) authentication.getPrincipal();
+//					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
+//					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+//							
+//					    	Cookie accessCookie = new Cookie("accessToken", accessToken);
+//					    	Cookie refreshCookie = new Cookie("refreshToken", refreshToken.getToken());
+//					    	
+//					    	response.addCookie(accessCookie);
+//					    	response.addCookie(refreshCookie);
+//					    	response.sendRedirect("/products");
+//						}
+//					});
 		        	login.permitAll();
 		        });
         return http.build();
