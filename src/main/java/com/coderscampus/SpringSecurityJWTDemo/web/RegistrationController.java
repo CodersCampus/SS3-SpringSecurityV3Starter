@@ -38,6 +38,11 @@ public class RegistrationController {
 		model.addAttribute("user", new User());
 		return "registration";
 	}
+	@GetMapping("/login")
+	public String getLogin (ModelMap model) {
+		model.addAttribute("user", new User());
+		return "login";
+	}
 	
 	
 //	@PostMapping("/register")
