@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,21 +35,28 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
-    
-    public AuthenticationController(AuthenticationServiceImpl authenticationService, RefreshTokenService refreshTokenService, JwtService jwtService) {
-        super();
-        this.authenticationService = authenticationService;
-        this.refreshTokenService = refreshTokenService;
-        this.jwtService = jwtService;
-    }
-    
-    @Autowired
     private UserServiceImpl userService;
+    
+    public AuthenticationController(AuthenticationServiceImpl authenticationService,
+			RefreshTokenService refreshTokenService, JwtService jwtService, UserServiceImpl userService) {
+		super();
+		this.authenticationService = authenticationService;
+		this.refreshTokenService = refreshTokenService;
+		this.jwtService = jwtService;
+		this.userService = userService;
+	}
+    
 
     @GetMapping("/signin")
 	public String getLogin (@ModelAttribute("user") User user) {
 		return "login";
 	}
+    
+    @GetMapping("/login-error")
+    public String loginError (Model model) {
+    	model.addAttribute("loginError", true);
+    	return "login";
+    }
     
 //    @PostMapping("/signin")
 //    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {

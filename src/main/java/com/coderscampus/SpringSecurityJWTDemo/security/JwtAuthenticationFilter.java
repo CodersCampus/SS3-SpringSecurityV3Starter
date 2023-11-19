@@ -30,6 +30,7 @@ import com.coderscampus.SpringSecurityJWTDemo.repository.RefreshTokenRepository;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
+import com.coderscampus.SpringSecurityJWTDemo.util.CookieUtils;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -42,17 +43,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtServiceImpl jwtService;
     private final UserServiceImpl userService;
-    
-    public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService) {
-        super();
-        this.jwtService = jwtService;
-        this.userService = userService;
-    }
-    
-    @Autowired
     private RefreshTokenService refreshTokenService;
 
-    @Override
+    public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
+			RefreshTokenService refreshTokenService) {
+		super();
+		this.jwtService = jwtService;
+		this.userService = userService;
+		this.refreshTokenService = refreshTokenService;
+	}
+
+
+	@Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
@@ -73,22 +75,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         	}
         }
         
-        int loginAttempt = 0;
-        String token = accessTokenCookie != null ? accessTokenCookie.getValue() : null;
-//        String token = accessTokenCookie.getValue();
         
-        while (loginAttempt <= 5) {
-        	
-        	if (StringUtils.hasText(token)) {
-//        	if (accessTokenCookie != null) {
+        if  (accessTokenCookie != null ) {
+        
+        	int loginAttempt = 0;
+//        	String token = accessTokenCookie != null ? accessTokenCookie.getValue() : null;
+
+        	while (loginAttempt <= 5) {
+        		String token = accessTokenCookie.getValue();
+
         		try {
         			String subject = jwtService.extractUserName(token);
-        			
-        			
         			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         			if (StringUtils.hasText(subject) && authentication == null) {
         				UserDetails userDetails = userService.userDetailsService().loadUserByUsername(subject);
-        				
+
         				if (jwtService.isTokenValid(token, userDetails)) {
         					SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken (userDetails,
@@ -96,19 +98,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         							userDetails.getAuthorities());
         					securityContext.setAuthentication(authToken);
         					SecurityContextHolder.setContext(securityContext);
-        					
+
         					// if successful login occurs:
         					break;
         				}
         			}
         		} catch (ExpiredJwtException e) {
-        			token = refreshTokenService.createNewAccessToken(new RefreshTokenRequest(refreshTokenCookie.getValue()));
-        			e.printStackTrace();
+        			try {
+						token = refreshTokenService.createNewAccessToken(new RefreshTokenRequest(refreshTokenCookie.getValue()));
+						accessTokenCookie = CookieUtils.createAccessTokenCookie(token);
+						
+						response.addCookie(accessTokenCookie);
+						e.printStackTrace();
+					} catch (Exception e1) {
+						
+						e1.printStackTrace();
+					}
         		}
         		loginAttempt++;
         	}
         }
         filterChain.doFilter(request, response);
-        
-    }
+
+	}
 }

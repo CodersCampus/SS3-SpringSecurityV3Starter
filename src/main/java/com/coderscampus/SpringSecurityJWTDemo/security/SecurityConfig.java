@@ -29,6 +29,7 @@ import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
+import com.coderscampus.SpringSecurityJWTDemo.util.CookieUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -72,27 +73,27 @@ public class SecurityConfig {
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {
 		        	login.loginPage("/signin");
-		        	login.successForwardUrl("/success");
+//		        	login.successForwardUrl("/success");
 //		        	login.failureUrl("/failure"); // this can be linked to a failure message on the failure template
 //		        	login.failureForwardUrl("/error");
-//		        	login.successHandler(new AuthenticationSuccessHandler() {
-//						
-//						@Override
-//						public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-//								Authentication authentication) throws IOException, ServletException {
-//							
-//							User user = (User) authentication.getPrincipal();
-//					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
-//					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-//							
-//					    	Cookie accessCookie = new Cookie("accessToken", accessToken);
-//					    	Cookie refreshCookie = new Cookie("refreshToken", refreshToken.getToken());
-//					    	
-//					    	response.addCookie(accessCookie);
-//					    	response.addCookie(refreshCookie);
-//					    	response.sendRedirect("/products");
-//						}
-//					});
+		        	login.successHandler(new AuthenticationSuccessHandler() {
+						
+						@Override
+						public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+								Authentication authentication) throws IOException, ServletException {
+							
+							User user = (User) authentication.getPrincipal();
+					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
+					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+							
+					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
+					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
+					    	
+					    	response.addCookie(accessTokenCookie);
+					    	response.addCookie(refreshTokenCookie);
+					    	response.sendRedirect("/products");
+						}
+					});
 		        	login.permitAll();
 		        });
         return http.build();
