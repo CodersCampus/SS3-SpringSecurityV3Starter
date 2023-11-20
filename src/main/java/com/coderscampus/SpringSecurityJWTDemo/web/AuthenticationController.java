@@ -68,7 +68,7 @@ public class AuthenticationController {
 //    	String accessToken = jwtService.generateToken(loggedUser);
 //    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(new HashMap<>(), loggedUser);
 //    	
-////        return ResponseEntity.ok(authenticationService.signin(request));
+//        return ResponseEntity.ok(authenticationService.signin(request));
 //    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
 //    }
     
