@@ -73,7 +73,14 @@ public class SecurityConfig {
 //				.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-				.formLogin(this::configureFormLogin);
+				.formLogin(this::configureFormLogin)
+				.logout(logoutConfigurer -> {
+		            logoutConfigurer
+		                .logoutUrl("/perform_logout") // URL to trigger the logout
+		                .logoutSuccessUrl("/login") // URL to redirect after logout		                
+		                .invalidateHttpSession(true) // Invalidate session
+		                .clearAuthentication(true); // Clear authentication
+		        });
 //                .formLogin(login -> {
 //		        	login.loginPage("/register");
 //		        	login.successForwardUrl("/success");
@@ -103,7 +110,7 @@ public class SecurityConfig {
 		System.out.println("Authentication successful for user: " + user.getUsername());
 
 		// Hard code redirect site:
-		String redirectUrl = "/products";
+		String redirectUrl = "/success";
 		System.out.println("Redirecting to: " + redirectUrl);
 
 		// Perform the redirect
