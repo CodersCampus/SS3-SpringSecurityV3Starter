@@ -95,14 +95,14 @@ public class SecurityConfig {
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 
-//		User user = (User) authentication.getPrincipal(); // Cast to your User domain object
-//		System.out.println("Authentication successful for user: " + user.getUsername());
-//		System.out.println("Authorities: " + user.getAuthorities());
-//		// Log user details
-//		System.out.println("Authentication successful for user: " + user.getUsername());
 
+		// Log user details:
+		User user = (User) authentication.getPrincipal(); // Cast to your User domain object
+		System.out.println("Authentication successful for user: " + user.getUsername());
+		System.out.println("Authorities: " + user.getAuthorities());
+		System.out.println("Authentication successful for user: " + user.getUsername());
 
-		// Determine the redirect URL based on the user's authorities
+		// Hard code redirect site:
 		String redirectUrl = "/products";
 		System.out.println("Redirecting to: " + redirectUrl);
 
@@ -130,9 +130,6 @@ public class SecurityConfig {
 		System.out.println("Provided email: " + email);
 		System.out.println("Provided Password: " + password);
 
-		// You can perform additional actions here if needed, such as redirecting to an
-		// error page
-		// For now, let's redirect to the login error page
 		try {
 			response.sendRedirect("/login-error");
 		} catch (java.io.IOException e) {

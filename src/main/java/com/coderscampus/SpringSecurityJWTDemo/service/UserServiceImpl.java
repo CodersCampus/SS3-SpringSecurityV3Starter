@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserDetailsService {
             .collect(Collectors.toList());
 
         // Return the UserDetails with authorities
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantedAuthorities);
+        return user;
     }
 
     @Secured({"ROLE_ADMIN"})
