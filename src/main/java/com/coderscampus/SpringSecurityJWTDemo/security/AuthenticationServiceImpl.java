@@ -1,8 +1,11 @@
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
 import com.coderscampus.SpringSecurityJWTDemo.domain.Authority;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +20,40 @@ import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     
-    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            JwtService jwtService, AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
-        super();
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
-        this.refreshTokenService = refreshTokenService;
+//    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+//            JwtService jwtService, AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+//        super();
+//        this.userRepository = userRepository;
+//        this.passwordEncoder = passwordEncoder;
+//        this.jwtService = jwtService;
+//        this.authenticationManager = authenticationManager;
+//        this.refreshTokenService = refreshTokenService;
+//    }
+    
+    @Autowired
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+    
+    
 
-    @Override
+    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
+		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+	super();
+	this.userRepository = userRepository;
+	this.jwtService = jwtService;
+	this.authenticationManager = authenticationManager;
+	this.refreshTokenService = refreshTokenService;
+}
+
+
+
+	@Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
         var user = new User()
                 .firstName(request.firstName())

@@ -3,6 +3,8 @@ package com.coderscampus.SpringSecurityJWTDemo.security;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,6 +40,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -45,6 +49,7 @@ public class SecurityConfig {
     private final UserServiceImpl userService;
     private JwtServiceImpl jwtService;
     private RefreshTokenService refreshTokenService;
+    private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserServiceImpl userService,
 			JwtServiceImpl jwtService, RefreshTokenService refreshTokenService) {
@@ -70,7 +75,7 @@ public class SecurityConfig {
                                         	.anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
-//                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {login
@@ -84,6 +89,8 @@ public class SecurityConfig {
 						public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 								Authentication authentication) throws IOException, ServletException {
 							
+							//HttpServletResponseWrapper ensures that the cookie is set only when the authentication is successful
+//							response = new HttpServletResponseWrapper(response);
 							User user = (User) authentication.getPrincipal();
 					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
 					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
@@ -110,7 +117,10 @@ public class SecurityConfig {
 							String email = request.getParameter("email");
 							String password = request.getParameter("password");
 							
-							System.out.println("failed: " + email + " " + password);
+							logger.error("Authentication failed for email: " + email);
+							logger.error("Authentication failed: " + exception.getMessage(), exception);
+							logger.error("Provided password: " + password);
+					        logger.error("Encoded password: " + passwordEncoder().encode(password));
 							
 							response.sendRedirect("/error");
 						}
@@ -128,8 +138,16 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        
+        UserDetailsService userDetailsService = userService.userDetailsService();
+        PasswordEncoder passwordEncoder = passwordEncoder();
+        
         authProvider.setUserDetailsService(userService.userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
+        
+        logger.info("UserDetailsService: " + userDetailsService);
+        logger.info("PasswordEncoder: " + passwordEncoder);
+        
         return authProvider;
     }
 

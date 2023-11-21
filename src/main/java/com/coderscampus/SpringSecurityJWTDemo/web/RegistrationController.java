@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -41,7 +43,9 @@ public class RegistrationController {
 	private AuthenticationServiceImpl authenticationService;
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 	
 	@Autowired
 	private JwtServiceImpl jwtService;
@@ -59,7 +63,8 @@ public class RegistrationController {
 	@PostMapping("/register")
 	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {
 	    Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-	    logger.info("Processing registration for user: " + user.getEmail());
+//	    String encodedPassword = passwordEncoder.encode(request.password());
+	    
 
 	    if (existingUser.isPresent()) {
 	    	logger.info("User already exists. Redirecting to userExists.");
@@ -67,11 +72,13 @@ public class RegistrationController {
 	        return "userExists";
 	    } else {
 	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
+	    	logger.info("Processing registration for user: " + user.getEmail());
+	    	logger.info("Encoded password: " + passwordEncoder().encode(request.password()) );
 			
 	        if (signupResponse != null) {
 	            // Successfully registered user, now proceed with authentication
 	                logger.info("Successfully registered user. Redirecting to success.");
-	                return "success";
+	                return "/login";
 	            } else {
 	                // Handle the case where authentication is not successful
 	            	logger.info("User registration failed. Redirecting to error.");
