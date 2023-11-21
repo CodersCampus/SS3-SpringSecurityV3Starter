@@ -16,9 +16,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -67,16 +69,16 @@ public class SecurityConfig {
                                         	.requestMatchers("/register").permitAll()
                                         	.anyRequest().permitAll()
                         )
-//                .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
+//                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(login -> {
-		        	login.loginPage("/signin");
-//		        	login.successForwardUrl("/success");
-//		        	login.failureUrl("/failure"); // this can be linked to a failure message on the failure template
-//		        	login.failureForwardUrl("/error");
-		        	login.successHandler(new AuthenticationSuccessHandler() {
+                .formLogin(login -> {login
+		        	.loginPage("/signin")
+//		        	.successForwardUrl("/success");
+//		        	.failureUrl("/failure"); // this can be linked to a failure message on the failure template
+//		        	.failureForwardUrl("/error");
+		        	.successHandler(new AuthenticationSuccessHandler() {
 						
 						@Override
 						public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -89,12 +91,31 @@ public class SecurityConfig {
 					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
 					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
+					    	System.out.println("success: " + user.getUsername());
+					    	System.out.println("what's this? " + user.getEmail());
+					    	System.out.println(accessTokenCookie);
+					    	
+					    	
 					    	response.addCookie(accessTokenCookie);
 					    	response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/products");
 						}
-					});
-		        	login.permitAll();
+					})
+		        	.failureHandler(new AuthenticationFailureHandler() {
+						
+						@Override
+						public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+								AuthenticationException exception) throws IOException, ServletException {
+
+							String email = request.getParameter("email");
+							String password = request.getParameter("password");
+							
+							System.out.println("failed: " + email + " " + password);
+							
+							response.sendRedirect("/error");
+						}
+					})
+		        	.permitAll();
 		        });
         return http.build();
     }
