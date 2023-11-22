@@ -1,9 +1,10 @@
-<<<<<<< HEAD
-=======
+
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
 import com.coderscampus.SpringSecurityJWTDemo.domain.Authority;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,37 +22,38 @@ import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
+	
+	private Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+	
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     
-//    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-//            JwtService jwtService, AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
-//        super();
-//        this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
-//        this.jwtService = jwtService;
-//        this.authenticationManager = authenticationManager;
-//        this.refreshTokenService = refreshTokenService;
-//    }
-    
-    @Autowired
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            JwtService jwtService, AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+        super();
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        this.refreshTokenService = refreshTokenService;
     }
     
-    
-
-    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
-		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
-	super();
-	this.userRepository = userRepository;
-	this.jwtService = jwtService;
-	this.authenticationManager = authenticationManager;
-	this.refreshTokenService = refreshTokenService;
-}
+//    @Autowired
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//    
+//    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
+//		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+//	super();
+//	this.userRepository = userRepository;
+//	this.jwtService = jwtService;
+//	this.authenticationManager = authenticationManager;
+//	this.refreshTokenService = refreshTokenService;
+//}
 
 
 
@@ -67,6 +69,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        
+        String encodedPassword = passwordEncoder.encode(request.password());
+        logger.error("Raw Password: {}, Encoded Password: {}", request.password(), encodedPassword);
+        
         return new JwtAuthenticationResponse(jwt, refreshToken.getToken());
     }
 
@@ -78,6 +84,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
         var jwt = jwtService.generateToken(user);
         var refreshTokenOpt = refreshTokenService.findByToken(jwt);
+        
+        logger.error("Provided password during login: {}", request.password());
+        logger.error("Encoded password during login: {}", user.getPassword()); // Print the encoded password from the database
+        
         if (refreshTokenOpt.isPresent()) {
             return new JwtAuthenticationResponse(jwt, refreshTokenOpt.get().getToken()); 
         } else {
@@ -85,4 +95,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 }
->>>>>>> parent of 463e6c1 (Working on login)
+

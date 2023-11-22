@@ -35,7 +35,7 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
-    private UserServiceImpl userService;
+    private final UserServiceImpl userService;
     
     public AuthenticationController(AuthenticationServiceImpl authenticationService,
 			RefreshTokenService refreshTokenService, JwtService jwtService, UserServiceImpl userService) {
@@ -47,15 +47,15 @@ public class AuthenticationController {
 	}
     
 
-//    @GetMapping("/signin")
-//	public String getLogin (@ModelAttribute("user") User user) {
-//		return "login";
-//	}
-    
     @GetMapping("/signin")
-    public String getLogin() {
-    	return "login";
-    }
+	public String getLogin (@ModelAttribute("user") User user) {
+		return "login";
+	}
+    
+//    @GetMapping("/signin")
+//    public String getLogin() {
+//    	return "login";
+//    }
     
     @GetMapping("/login-error")
     public String loginError (Model model) {

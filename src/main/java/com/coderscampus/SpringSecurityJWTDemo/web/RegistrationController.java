@@ -68,7 +68,7 @@ public class RegistrationController {
 	@PostMapping("/register")
 	public String processRegistration(@ModelAttribute("user") User user, SignUpRequest request) {
 	    Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//	    String encodedPassword = passwordEncoder.encode(request.password());
+	    String encodedPassword = passwordEncoder.encode(request.password());
 	    
 
 	    if (existingUser.isPresent()) {
@@ -79,8 +79,8 @@ public class RegistrationController {
 	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
 	    	logger.info("This data is from the ProcessRegistration in the RegistrationController");
 	    	logger.info("Processing registration for user: " + user.getEmail());
-	    	logger.error("Provided password: " + request.password());
-	    	logger.info("Encoded password: " + passwordEncoder().encode(request.password()) );
+	    	logger.error("Provided password during registration: " + request.password());
+	    	logger.info("Encoded password during registration: " + encodedPassword);
 			
 	        if (signupResponse != null) {
 	            // Successfully registered user, now proceed with authentication

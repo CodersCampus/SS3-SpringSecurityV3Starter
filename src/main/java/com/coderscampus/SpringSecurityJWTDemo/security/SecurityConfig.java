@@ -47,8 +47,8 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserServiceImpl userService;
-    private JwtServiceImpl jwtService;
-    private RefreshTokenService refreshTokenService;
+    private final JwtServiceImpl jwtService;
+    private final RefreshTokenService refreshTokenService;
     private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserServiceImpl userService,
@@ -80,9 +80,8 @@ public class SecurityConfig {
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {login
 		        	.loginPage("/signin")
-//		        	.successForwardUrl("/success");
 //		        	.failureUrl("/failure"); // this can be linked to a failure message on the failure template
-//		        	.failureForwardUrl("/error");
+		        	.usernameParameter("email")
 		        	.successHandler(new AuthenticationSuccessHandler() {
 						
 						@Override
@@ -119,14 +118,21 @@ public class SecurityConfig {
 							
 							logger.error("Authentication failed for email: " + email);
 							logger.error("Authentication failed: " + exception.getMessage(), exception);
-							logger.error("Provided password: " + password);
-					        logger.error("Encoded password: " + passwordEncoder().encode(password));
+							logger.error("Provided password during login: " + password);
+					        logger.error("Encoded password during login: " + passwordEncoder().encode(password));
 							
 							response.sendRedirect("/error");
 						}
 					})
+
 		        	.permitAll();
-		        });
+//		        })
+//                .logout(logoutConfigurer -> {logoutConfigurer
+//                	.logoutUrl("/logout")
+//                	.logoutUrl("/signin")
+//                	.invalidateHttpSession(true)
+//                	.clearAuthentication(true);
+                });
         return http.build();
     }
 

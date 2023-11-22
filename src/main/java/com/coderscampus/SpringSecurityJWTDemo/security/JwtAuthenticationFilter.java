@@ -43,7 +43,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtServiceImpl jwtService;
     private final UserServiceImpl userService;
-    private RefreshTokenService refreshTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
 			RefreshTokenService refreshTokenService) {
