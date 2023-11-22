@@ -145,6 +145,7 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userService.userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         
+        logger.info("This data is from the AuthenticationProvider in the SecurityConfig Class");
         logger.info("UserDetailsService: " + userDetailsService);
         logger.info("PasswordEncoder: " + passwordEncoder);
         
