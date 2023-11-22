@@ -20,36 +20,36 @@ import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     
-//    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-//            JwtService jwtService, AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
-//        super();
-//        this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
-//        this.jwtService = jwtService;
-//        this.authenticationManager = authenticationManager;
-//        this.refreshTokenService = refreshTokenService;
-//    }
-    
-    @Autowired
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            JwtService jwtService, AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+        super();
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        this.refreshTokenService = refreshTokenService;
     }
+    
+//    @Autowired
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
     
     
 
-    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
-		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
-	super();
-	this.userRepository = userRepository;
-	this.jwtService = jwtService;
-	this.authenticationManager = authenticationManager;
-	this.refreshTokenService = refreshTokenService;
-}
+//    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
+//		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+//	super();
+//	this.userRepository = userRepository;
+//	this.jwtService = jwtService;
+//	this.authenticationManager = authenticationManager;
+//	this.refreshTokenService = refreshTokenService;
+//}
 
 
 

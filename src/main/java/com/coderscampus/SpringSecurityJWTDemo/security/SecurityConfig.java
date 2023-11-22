@@ -75,14 +75,13 @@ public class SecurityConfig {
                                         	.anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {login
 		        	.loginPage("/signin")
-//		        	.successForwardUrl("/success");
 //		        	.failureUrl("/failure"); // this can be linked to a failure message on the failure template
-//		        	.failureForwardUrl("/error");
+		        	.usernameParameter("email")
 		        	.successHandler(new AuthenticationSuccessHandler() {
 						
 						@Override
