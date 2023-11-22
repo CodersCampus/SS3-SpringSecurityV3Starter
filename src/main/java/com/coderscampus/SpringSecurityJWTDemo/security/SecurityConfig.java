@@ -75,9 +75,9 @@ public class SecurityConfig {
                                         	.anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> {login
 		        	.loginPage("/signin")
 //		        	.failureUrl("/failure"); // this can be linked to a failure message on the failure template
@@ -91,19 +91,19 @@ public class SecurityConfig {
 							//HttpServletResponseWrapper ensures that the cookie is set only when the authentication is successful
 //							response = new HttpServletResponseWrapper(response);
 							User user = (User) authentication.getPrincipal();
-					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
-					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-							
-					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
-					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
+//					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
+//					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+//							
+//					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
+//					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
 					    	System.out.println("success: " + user.getUsername());
 					    	System.out.println("what's this? " + user.getEmail());
-					    	System.out.println(accessTokenCookie);
-					    	
-					    	
-					    	response.addCookie(accessTokenCookie);
-					    	response.addCookie(refreshTokenCookie);
+//					    	System.out.println(accessTokenCookie);
+//					    	
+//					    	
+//					    	response.addCookie(accessTokenCookie);
+//					    	response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/products");
 						}
 					})
@@ -124,7 +124,6 @@ public class SecurityConfig {
 							response.sendRedirect("/error");
 						}
 					})
-
 		        	.permitAll();
 //		        })
 //                .logout(logoutConfigurer -> {logoutConfigurer
