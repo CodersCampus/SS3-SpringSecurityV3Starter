@@ -35,24 +35,29 @@ import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 public class RegistrationController {
 	
 	private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
+	
+//	private PasswordEncoder passwordEncoder() {
+//		return new BCryptPasswordEncoder();
+//	}
 
-	@Autowired
 	private UserServiceImpl userService;
-	
-	@Autowired
 	private AuthenticationServiceImpl authenticationService;
-	
-	@Autowired
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-	
-	@Autowired
 	private JwtServiceImpl jwtService;
-	
-	@Autowired
 	private RefreshTokenService refreshTokenService;
+	private PasswordEncoder passwordEncoder;
+
 	
+	public RegistrationController(UserServiceImpl userService, AuthenticationServiceImpl authenticationService,
+			JwtServiceImpl jwtService, RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder) {
+		super();
+		this.userService = userService;
+		this.authenticationService = authenticationService;
+		this.jwtService = jwtService;
+		this.refreshTokenService = refreshTokenService;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+
 	@GetMapping("/register")
 	public String getRegistration (ModelMap model) {
 		model.addAttribute("user", new User());
@@ -72,7 +77,9 @@ public class RegistrationController {
 	        return "userExists";
 	    } else {
 	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
+	    	logger.info("This data is from the ProcessRegistration in the RegistrationController");
 	    	logger.info("Processing registration for user: " + user.getEmail());
+	    	logger.error("Provided password: " + request.password());
 	    	logger.info("Encoded password: " + passwordEncoder().encode(request.password()) );
 			
 	        if (signupResponse != null) {
