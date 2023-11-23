@@ -125,12 +125,12 @@ public class SecurityConfig {
 						}
 					})
 		        	.permitAll();
-//		        })
-//                .logout(logoutConfigurer -> {logoutConfigurer
-//                	.logoutUrl("/logout")
-//                	.logoutUrl("/signin")
-//                	.invalidateHttpSession(true)
-//                	.clearAuthentication(true);
+		        })
+                .logout(logoutConfigurer -> {logoutConfigurer
+                	.logoutUrl("/logout")
+                	.logoutUrl("/signin")
+                	.invalidateHttpSession(true)
+                	.clearAuthentication(true);
                 });
         return http.build();
     }
