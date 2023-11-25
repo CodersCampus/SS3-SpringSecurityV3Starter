@@ -103,7 +103,7 @@ public class SecurityConfig {
 //					    	
 //					    	response.addCookie(accessTokenCookie);
 //					    	response.addCookie(refreshTokenCookie);
-					    	response.sendRedirect("/success");
+					    	response.sendRedirect("/products");
 						}
 					})
 		        	.failureHandler(new AuthenticationFailureHandler() {
@@ -127,7 +127,7 @@ public class SecurityConfig {
 		        })
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
-                	.logoutSuccessUrl("/signin")
+                	.logoutUrl("/signin")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
