@@ -52,6 +52,7 @@ public class AuthenticationController {
 		return "login";
 	}
     
+
 //    @GetMapping("/signin")
 //    public String getLogin() {
 //    	return "login";
@@ -63,39 +64,32 @@ public class AuthenticationController {
     	return "login";
     }
     
-//    @PostMapping("/signin")
-//    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
-//    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//    	
+
+    @PostMapping("/signin")
+    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
+    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+//    	User loggedUser = ((User) userService).loadUserByUsername(user.getUsername());
+    	String accessToken = jwtService.generateToken(user);
+    	
+        return ResponseEntity.ok(authenticationService.signin(request));
 //    	User loggedUser = (User) userService.userDetailsService().loadUserByUsername(user.getUsername());
-//    	
-//    	// moving the below to the SecurityConfig SecFilterChain:
+    	
+    	// moving the below to the SecurityConfig SecFilterChain:
 //    	String accessToken = jwtService.generateToken(loggedUser);
-//    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(new HashMap<>(), loggedUser);
-//    	
+//    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(loggedUser.getId());
+    	
 //        return ResponseEntity.ok(authenticationService.signin(request));
 //    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
-//    }
+    }
+
     
 //    @PostMapping("/signin")
 //    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
 //    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
+//    	User loggedUser = ((User) userService).loadUserByUsername(user.getUsername());
+//    	String accessToken = jwtService.generateToken(user);
 //    	
-//    	if (existingUser.isPresent()) {
-//            // User exists; proceed with authentication
-//            JwtAuthenticationResponse authenticationResponse = authenticationService.signin(request);
-//
-//            if (authenticationResponse != null) {
-//                // Authentication successful; you can proceed as needed
-//                return "success"; // Redirect to a success page
-//            } else {
-//                // Handle unsuccessful authentication (e.g., wrong password)
-//                return "error"; // Redirect to an error page
-//            }
-//        } else {
-//            // Handle the case where the user does not exist
-//            return "userNotExists"; // Redirect to a userNotExists page
-//        }
+//        return ResponseEntity.ok(authenticationService.signin(request));
 //    }
     
 //    @PostMapping("/signin")
