@@ -108,7 +108,7 @@ public class SecurityConfig {
 //					    	
 //					    	response.addCookie(accessTokenCookie);
 //					    	response.addCookie(refreshTokenCookie);
-					    	response.sendRedirect("/products");
+					    	response.sendRedirect("/signin");
 						}
 					})
 		        	.failureHandler(new AuthenticationFailureHandler() {
@@ -135,17 +135,9 @@ public class SecurityConfig {
                 	.logoutUrl("/signin")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
-                })
+                });
 
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(login -> {
-		        	login.loginPage("/signin");
-		        	login.successForwardUrl("/success");
-		        	login.failureForwardUrl("/error");
-		        	login.permitAll();
-		        });
+
 
         return http.build();
     }
