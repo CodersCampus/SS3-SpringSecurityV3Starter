@@ -102,7 +102,7 @@ public class SecurityConfig {
 //					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
 					    	System.out.println("success: " + user.getUsername());
-					    	System.out.println("what's this? " + user.getEmail());
+//					    	System.out.println("what's this? " + user.getEmail());
 //					    	System.out.println(accessTokenCookie);
 //					    	
 //					    	
@@ -132,7 +132,7 @@ public class SecurityConfig {
 		        })
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
-                	.logoutUrl("/signin")
+                	.logoutSuccessUrl("/signin")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
