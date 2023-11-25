@@ -6,6 +6,10 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
+import com.coderscampus.SpringSecurityJWTDemo.domain.User;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +35,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
 import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
+import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
@@ -130,7 +135,18 @@ public class SecurityConfig {
                 	.logoutUrl("/signin")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
-                });
+                })
+
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider()).addFilterBefore(
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin(login -> {
+		        	login.loginPage("/signin");
+		        	login.successForwardUrl("/success");
+		        	login.failureForwardUrl("/error");
+		        	login.permitAll();
+		        });
+
         return http.build();
     }
 
