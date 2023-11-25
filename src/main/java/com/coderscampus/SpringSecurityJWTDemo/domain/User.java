@@ -25,7 +25,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
     private List<Authority> authorities = new ArrayList<>();
-
+    
+    /*
+     * enable if you want to have the confirm password to be checked in the back end + their corresponding getters and setters
+     * private String confirmPassword;
+     */
+    
+    
     @Override
     public Collection<Authority> getAuthorities() {
         return authorities;
@@ -133,8 +139,4 @@ public class User implements UserDetails {
         return this;
     }
 
-	public User loadUserByUsername(String username) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
