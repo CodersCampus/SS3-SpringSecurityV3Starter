@@ -35,23 +35,23 @@ import com.coderscampus.SpringSecurityJWTDemo.util.CookieUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtServiceImpl jwtService;
-    private final UserServiceImpl userService;
-    private final RefreshTokenService refreshTokenService;
+	private final JwtServiceImpl jwtService;
+	private final UserServiceImpl userService;
+	private final RefreshTokenService refreshTokenService;
 
-    public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
+	public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
 			RefreshTokenService refreshTokenService) {
 		super();
 		this.jwtService = jwtService;
 		this.userService = userService;
 		this.refreshTokenService = refreshTokenService;
 	}
-
 
 	@Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -64,8 +64,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         
+        Cookie accessTokenCookie = null;
+        Cookie refreshTokenCookie = null;
+        
+        if (request.getCookies() != null) {
+        	for (Cookie cookie : request.getCookies()) {
+        		if (cookie.getName().equals("accessToken")) {
+        			accessTokenCookie = cookie;
+        		} else if (cookie.getName().equals("refreshToken")) {
+        			refreshTokenCookie = cookie;
+        		}
+        	}
+        }
         
         if  (accessTokenCookie != null ) {
         
