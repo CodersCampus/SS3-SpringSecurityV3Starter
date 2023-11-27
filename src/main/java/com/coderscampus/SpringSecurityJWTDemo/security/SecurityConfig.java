@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 
+
+import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
+import com.coderscampus.SpringSecurityJWTDemo.domain.User;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -136,9 +140,6 @@ public class SecurityConfig {
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
-
-
-
         return http.build();
     }
 
