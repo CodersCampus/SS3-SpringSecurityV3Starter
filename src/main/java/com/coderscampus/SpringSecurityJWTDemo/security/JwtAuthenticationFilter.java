@@ -74,19 +74,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         	}
         }
         
-        Cookie accessTokenCookie = null;
-        Cookie refreshTokenCookie = null;
-        
-        if (request.getCookies() != null) {
-        	for (Cookie cookie : request.getCookies()) {
-        		if (cookie.getName().equals("accessToken")) {
-        			accessTokenCookie = cookie;
-        		} else if (cookie.getName().equals("refreshToken")) {
-        			refreshTokenCookie = cookie;
-        		}
-        	}
-        }
-        
         if  (accessTokenCookie != null ) {
         
         	int loginAttempt = 0;
