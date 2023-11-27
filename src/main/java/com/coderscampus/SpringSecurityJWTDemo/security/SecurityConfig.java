@@ -78,9 +78,9 @@ public class SecurityConfig {
                                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                                         .requestMatchers("/products").authenticated()
-//                                        	.requestMatchers("/signin").permitAll()
-                                        	.requestMatchers("/register").permitAll()
-                                        	.anyRequest().permitAll()
+                                        .requestMatchers("/success").authenticated()
+                                        .requestMatchers("/register").permitAll()
+                                        .anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
 //                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -105,14 +105,13 @@ public class SecurityConfig {
 //					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
 //					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
-					    	System.out.println("success: " + user.getUsername());
-//					    	System.out.println("what's this? " + user.getEmail());
+							logger.info("successful authentication for: " + user.getUsername());
 //					    	System.out.println(accessTokenCookie);
 //					    	
 //					    	
 //					    	response.addCookie(accessTokenCookie);
 //					    	response.addCookie(refreshTokenCookie);
-					    	response.sendRedirect("/signin");
+					    	response.sendRedirect("/success");
 						}
 					})
 		        	.failureHandler(new AuthenticationFailureHandler() {

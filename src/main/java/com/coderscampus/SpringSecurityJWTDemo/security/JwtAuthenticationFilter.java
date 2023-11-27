@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -44,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtServiceImpl jwtService;
 	private final UserServiceImpl userService;
 	private final RefreshTokenService refreshTokenService;
+	private Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
 	public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
 			RefreshTokenService refreshTokenService) {
@@ -116,6 +119,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         		loginAttempt++;
         	}
         }
+        logger.debug("Request URI: {}", request.getRequestURI());
+        logger.debug("Auth Header: {}", authHeader);
+        logger.debug("Access Token Cookie: {}", accessTokenCookie);
+        logger.debug("Refresh Token Cookie: {}", refreshTokenCookie);
+        
         filterChain.doFilter(request, response);
 
 	}
