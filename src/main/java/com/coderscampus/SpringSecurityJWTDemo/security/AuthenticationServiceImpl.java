@@ -1,8 +1,14 @@
+
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
 import com.coderscampus.SpringSecurityJWTDemo.domain.Authority;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +22,9 @@ import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
+	
+	private Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+	
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -31,8 +40,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.authenticationManager = authenticationManager;
         this.refreshTokenService = refreshTokenService;
     }
+    
+//    @Autowired
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//    
+//    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
+//		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
+//	super();
+//	this.userRepository = userRepository;
+//	this.jwtService = jwtService;
+//	this.authenticationManager = authenticationManager;
+//	this.refreshTokenService = refreshTokenService;
+//}
 
-    @Override
+
+
+	@Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
         var user = new User()
                 .firstName(request.firstName())
@@ -44,6 +69,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        
+        String encodedPassword = passwordEncoder.encode(request.password());
+        logger.error("Raw Password: {}, Encoded Password: {}", request.password(), encodedPassword);
+        
         return new JwtAuthenticationResponse(jwt, refreshToken.getToken());
     }
 
@@ -55,6 +84,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
         var jwt = jwtService.generateToken(user);
         var refreshTokenOpt = refreshTokenService.findByToken(jwt);
+        
+        logger.error("Provided password during login: {}", request.password());
+        logger.error("Encoded password during login: {}", user.getPassword()); // Print the encoded password from the database
+        
         if (refreshTokenOpt.isPresent()) {
             return new JwtAuthenticationResponse(jwt, refreshTokenOpt.get().getToken()); 
         } else {
@@ -62,3 +95,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 }
+
