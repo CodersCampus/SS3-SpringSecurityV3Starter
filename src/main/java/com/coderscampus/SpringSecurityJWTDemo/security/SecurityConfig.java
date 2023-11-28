@@ -88,20 +88,19 @@ public class SecurityConfig {
 								Authentication authentication) throws IOException, ServletException {
 							
 							//HttpServletResponseWrapper ensures that the cookie is set only when the authentication is successful
-//							response = new HttpServletResponseWrapper(response);
+							response = new HttpServletResponseWrapper(response);
 							User user = (User) authentication.getPrincipal();
-//					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
+					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
 //					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 //							
-//					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
+					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
 //					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
-					    	System.out.println("success: " + user.getUsername());
-					    	System.out.println("what's this? " + user.getEmail());
-//					    	System.out.println(accessTokenCookie);
+							logger.info("successful authentication for: " + user.getUsername());
+					    	System.out.println("Access Cookie: " + accessTokenCookie);
 //					    	
 //					    	
-//					    	response.addCookie(accessTokenCookie);
+					    	response.addCookie(accessTokenCookie);
 //					    	response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/success");
 						}
