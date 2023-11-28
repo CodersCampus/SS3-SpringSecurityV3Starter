@@ -71,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
         String encodedPassword = passwordEncoder.encode(request.password());
-        logger.error("Raw Password: {}, Encoded Password: {}", request.password(), encodedPassword);
+        logger.info("Raw Password: {}, Encoded Password: {}", request.password(), encodedPassword);
         
         return new JwtAuthenticationResponse(jwt, refreshToken.getToken());
     }
