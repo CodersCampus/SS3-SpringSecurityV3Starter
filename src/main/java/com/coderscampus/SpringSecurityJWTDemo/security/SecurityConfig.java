@@ -91,17 +91,17 @@ public class SecurityConfig {
 							response = new HttpServletResponseWrapper(response);
 							User user = (User) authentication.getPrincipal();
 					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
-//					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 //							
 					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
-//					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
+					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
 							logger.info("successful authentication for: " + user.getUsername());
 					    	System.out.println("Access Cookie: " + accessTokenCookie.toString());
 //					    	
 //					    	
 					    	response.addCookie(accessTokenCookie);
-//					    	response.addCookie(refreshTokenCookie);
+					    	response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/success");
 						}
 					})
