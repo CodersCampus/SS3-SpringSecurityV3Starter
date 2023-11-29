@@ -101,7 +101,7 @@ public class SecurityConfig {
 //					    	
 //					    	
 					    	response.addCookie(accessTokenCookie);
-					    	response.addCookie(refreshTokenCookie);
+//					    	response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/success");
 						}
 					})
@@ -127,6 +127,9 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
                 	.logoutSuccessUrl("/signin")
+                	// delete cookies from client after logout
+                	.deleteCookies("accessToken") 
+//                	.deleteCookies("refreshToken")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
