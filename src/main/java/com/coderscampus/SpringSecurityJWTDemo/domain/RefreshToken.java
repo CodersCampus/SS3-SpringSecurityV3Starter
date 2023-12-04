@@ -1,14 +1,8 @@
 package com.coderscampus.SpringSecurityJWTDemo.domain;
 
-import java.time.Instant;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import java.time.Instant;
 
 @Entity
 public class RefreshToken {
@@ -16,7 +10,7 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
