@@ -122,6 +122,8 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
                 	.logoutSuccessUrl("/signin")
+	                .deleteCookies("accessToken") // Cookies to delete upon logout
+//	                .deleteCookies("refreshToken") // Cookies to delete upon logout
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
