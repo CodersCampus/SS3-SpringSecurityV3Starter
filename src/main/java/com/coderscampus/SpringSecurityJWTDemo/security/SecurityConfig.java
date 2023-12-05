@@ -1,19 +1,18 @@
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
-import java.io.IOException;
-import java.util.HashMap;
-
+import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
+import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
+import com.coderscampus.SpringSecurityJWTDemo.domain.User;
+import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
+import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
+import com.coderscampus.SpringSecurityJWTDemo.util.CookieUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
-import com.coderscampus.SpringSecurityJWTDemo.domain.User;
-
-
-import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
-import com.coderscampus.SpringSecurityJWTDemo.domain.User;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +23,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -97,20 +95,22 @@ public class SecurityConfig {
 								Authentication authentication) throws IOException, ServletException {
 							
 							//HttpServletResponseWrapper ensures that the cookie is set only when the authentication is successful
-//							response = new HttpServletResponseWrapper(response);
+							response = new HttpServletResponseWrapper(response);
 							User user = (User) authentication.getPrincipal();
-//					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
-//					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-//							
-//					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
-//					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
+					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
+					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
+					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
+							logger.info("successful authentication for: " + user.getUsername());
+					    	System.out.println("Access Cookie: " + accessTokenCookie);
 							logger.info("successful authentication for: " + user.getUsername());
 //					    	System.out.println(accessTokenCookie);
 //					    	
 //					    	
-//					    	response.addCookie(accessTokenCookie);
-//					    	response.addCookie(refreshTokenCookie);
+					    	response.addCookie(accessTokenCookie);
+							response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/success");
 						}
 					})
