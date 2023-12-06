@@ -77,9 +77,9 @@ public class RegistrationController {
 	        return "userExists";
 	    } else {
 	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
-	    	logger.info("This data is from the ProcessRegistration in the RegistrationController");
+	    	System.out.println("This data is from the ProcessRegistration in the RegistrationController");
 	    	logger.info("Processing registration for user: " + user.getEmail());
-	    	logger.error("Provided password during registration: " + request.password());
+	    	logger.info("Provided password during registration: " + request.password());
 	    	logger.info("Encoded password during registration: " + encodedPassword);
 			
 	        if (signupResponse != null) {
@@ -88,7 +88,7 @@ public class RegistrationController {
 	                return "login";
 	            } else {
 	                // Handle the case where authentication is not successful
-	            	logger.info("User registration failed. Redirecting to error.");
+	            	logger.debug("User registration failed. Redirecting to error.");
 	                return "error";
 	            }
 	        }

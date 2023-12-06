@@ -1,11 +1,22 @@
 package com.coderscampus.SpringSecurityJWTDemo.security;
 
+import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
+import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
+import com.coderscampus.SpringSecurityJWTDemo.domain.User;
+import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
+import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
+import com.coderscampus.SpringSecurityJWTDemo.util.CookieUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
+
 import java.io.IOException;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +27,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,19 +38,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
-import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
-import com.coderscampus.SpringSecurityJWTDemo.domain.User;
-import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
-import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
-import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
-import com.coderscampus.SpringSecurityJWTDemo.util.CookieUtils;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -69,9 +67,9 @@ public class SecurityConfig {
                                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                                         .requestMatchers("/products").authenticated()
-//                                        	.requestMatchers("/signin").permitAll()
-                                        	.requestMatchers("/register").permitAll()
-                                        	.anyRequest().permitAll()
+                                        .requestMatchers("/success").authenticated()
+                                        .requestMatchers("/register").permitAll()
+                                        .anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
 //                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -92,16 +90,18 @@ public class SecurityConfig {
 							User user = (User) authentication.getPrincipal();
 					    	String accessToken = jwtService.generateToken(new HashMap<>(), user);
 					    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-//							
+
 					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
 					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
 							logger.info("successful authentication for: " + user.getUsername());
-					    	System.out.println("Access Cookie: " + accessTokenCookie.toString());
+					    	System.out.println("Access Cookie: " + accessTokenCookie);
+							logger.info("successful authentication for: " + user.getUsername());
+//					    	System.out.println(accessTokenCookie);
 //					    	
 //					    	
 					    	response.addCookie(accessTokenCookie);
-//					    	response.addCookie(refreshTokenCookie);
+							response.addCookie(refreshTokenCookie);
 					    	response.sendRedirect("/success");
 						}
 					})
