@@ -129,7 +129,8 @@ public class SecurityConfig {
                 	.logoutSuccessUrl("/signin")
                 	// delete cookies from client after logout
                 	.deleteCookies("accessToken") 
-//                	.deleteCookies("refreshToken")
+                	.deleteCookies("refreshToken")
+                	.deleteCookies("JSESSIONID")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
