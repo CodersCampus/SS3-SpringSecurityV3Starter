@@ -27,9 +27,12 @@ public class AdminController {
 		this.userService = userService;
 		this.userRepo = userRepo;
 		this.passwordEncoder = passwordEncoder;
+		
+		createAdminUser();
 	}
 
 	List<User> allAdmins = new ArrayList<>();
+
 	
 	public void createAdminUser() {
 		User adminUser = new User();
