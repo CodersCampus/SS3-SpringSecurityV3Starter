@@ -1,6 +1,7 @@
 package com.coderscampus.SpringSecurityJWTDemo.web;
 
 import com.coderscampus.SpringSecurityJWTDemo.domain.Authority;
+import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.repository.UserRepository;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
@@ -42,7 +43,7 @@ public class AdminController {
 		adminUser.setPassword(passwordEncoder.encode("adminPassword"));
 //		adminUser.authority("ROLE_ADMIN");
 		
-		Authority adminAuth = new Authority("ADMIN", adminUser);
+		Authority adminAuth = new Authority(Role.ADMIN.name(), adminUser);
 		
 		adminUser.setAuthorities(List.of(adminAuth));
 		

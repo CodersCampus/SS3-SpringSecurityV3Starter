@@ -92,8 +92,9 @@ public class SecurityConfig {
 					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
 							logger.info("successful authentication for: " + user.getUsername());
-					    	System.out.println("Access Cookie: " + accessTokenCookie);
-//					    	
+							logger.info("Access Cookie: " + accessTokenCookie);
+							logger.info("Refresh Cookie: " + refreshTokenCookie);
+					    	logger.info("Role for " + user.getUsername() + "is: " + user.authority(accessToken));
 //					    	
 					    	response.addCookie(accessTokenCookie);
 							response.addCookie(refreshTokenCookie);
