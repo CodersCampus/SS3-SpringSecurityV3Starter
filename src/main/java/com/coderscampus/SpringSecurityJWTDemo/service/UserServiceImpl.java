@@ -1,5 +1,6 @@
 package com.coderscampus.SpringSecurityJWTDemo.service;
 
+import com.coderscampus.SpringSecurityJWTDemo.domain.Authority;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
@@ -58,6 +59,27 @@ public class UserServiceImpl implements UserService {
     @Secured({"ROLE_ADMIN"})
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+    
+    @Secured("ROLE_ADMIN")
+    public void elevateUserToAdmin(Integer userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Check if the user doesn't already have the admin role
+            if (user.getAuthorities().stream().noneMatch(auth -> "ROLE_ADMIN".equals(auth.getAuthority()))) {
+                // Add the admin role to the user
+                Authority adminAuthority = new Authority("ROLE_ADMIN");
+                user.getAuthorities().add(adminAuthority);
+
+                // Save the updated user
+                userRepository.save(user);
+            }
+        } else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
     }
     
     public User registerUser(User user) {
