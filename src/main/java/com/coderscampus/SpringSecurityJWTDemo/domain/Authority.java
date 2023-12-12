@@ -20,6 +20,11 @@ public class Authority implements GrantedAuthority {
     public Authority () {}
 
     @Override
+	public String toString() {
+		return "Authority [id=" + id + ", authority=" + authority + ", user=" + user + "]";
+	}
+    
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
