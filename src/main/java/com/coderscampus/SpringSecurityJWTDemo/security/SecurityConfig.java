@@ -91,10 +91,10 @@ public class SecurityConfig {
 					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
 					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
-							logger.info("successful authentication for: " + user.getUsername());
-							logger.info("Access Cookie: " + accessTokenCookie);
-							logger.info("Refresh Cookie: " + refreshTokenCookie);
-					    	logger.info("Role for " + user.getUsername() + "is: " + user.authority(accessToken));
+							logger.info("Successful authentication for: " + user.getUsername());
+							logger.info("Access Cookie: " + accessTokenCookie.getValue());
+							logger.info("Refresh Cookie: " + refreshTokenCookie.getValue());
+					    	logger.info("Role for " + user.getUsername() + " is: " + user.authority(accessToken).toString());
 //					    	
 					    	response.addCookie(accessTokenCookie);
 							response.addCookie(refreshTokenCookie);
@@ -112,8 +112,8 @@ public class SecurityConfig {
 							
 							logger.error("Authentication failed for email: " + email);
 							logger.error("Authentication failed: " + exception.getMessage(), exception);
-							logger.error("Provided password during login: " + password);
-					        logger.error("Encoded password during login: " + passwordEncoder().encode(password));
+							logger.info("Provided password during login: " + password);
+					        logger.info("Encoded password during login: " + passwordEncoder().encode(password));
 							
 							response.sendRedirect("/error");
 						}
@@ -144,7 +144,6 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userService.userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         
-        logger.info("This data is from the AuthenticationProvider in the SecurityConfig Class");
         logger.info("UserDetailsService: " + userDetailsService);
         logger.info("PasswordEncoder: " + passwordEncoder);
         
