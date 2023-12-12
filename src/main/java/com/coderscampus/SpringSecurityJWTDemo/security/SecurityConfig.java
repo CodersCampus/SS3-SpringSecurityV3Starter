@@ -94,7 +94,7 @@ public class SecurityConfig {
 							logger.info("successful authentication for: " + user.getUsername());
 							logger.info("Access Cookie: " + accessTokenCookie);
 							logger.info("Refresh Cookie: " + refreshTokenCookie);
-					    	logger.info("Role for " + user.getUsername() + "is: " + user.authority(accessToken));
+					    	logger.info("Role for " + user.getUsername() + " is: " + user.authority(accessToken).toString());
 //					    	
 					    	response.addCookie(accessTokenCookie);
 							response.addCookie(refreshTokenCookie);
