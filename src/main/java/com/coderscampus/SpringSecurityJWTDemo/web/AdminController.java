@@ -5,9 +5,13 @@ import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.repository.UserRepository;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
+import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 import jakarta.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -21,15 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 //@RestController
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    private UserService userService;
+    private UserServiceImpl userService;
     private UserRepository userRepo;
     private PasswordEncoder passwordEncoder;
+    private Logger logger = LoggerFactory.getLogger(AdminController.class);
     
-    public AdminController(UserService userService, UserRepository userRepo, PasswordEncoder passwordEncoder) {
+    public AdminController(UserServiceImpl userService, UserRepository userRepo, PasswordEncoder passwordEncoder) {
 		super();
 		this.userService = userService;
 		this.userRepo = userRepo;
@@ -70,13 +76,17 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String getDashboard (ModelMap model) {
     	List<User> users = userService.findAll();
-    	model.addAttribute(users);
+    	model.addAttribute("userList", users);
     	return "dashboard";
     }
     
     @PostMapping("/makeAdmin")
-    public ResponseEntity<String> elevateToAdmin (@RequestParam Long userId) {
-    	
+    public ResponseEntity<String> elevateToAdmin (@RequestParam Integer userId) {
+    	Optional<User> findUser = userService.findUserById(userId);
+    	    	
+    	userService.elevateUserToAdmin(userId);
+    	logger.info("Processing elevation for user: {}", findUser.get().getEmail());
+    	logger.info("Role: {}", findUser.get().getAuthorities());
     	return ResponseEntity.ok("User elevated to admin");
     }
 }
