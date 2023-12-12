@@ -5,6 +5,9 @@ import com.coderscampus.SpringSecurityJWTDemo.domain.Role;
 import com.coderscampus.SpringSecurityJWTDemo.domain.User;
 import com.coderscampus.SpringSecurityJWTDemo.repository.UserRepository;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserService;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 //@RestController
 @Controller
@@ -28,10 +32,14 @@ public class AdminController {
 		this.userService = userService;
 		this.userRepo = userRepo;
 		this.passwordEncoder = passwordEncoder;
-		
-		createAdminUser();
 	}
 
+    @PostConstruct
+    public void init() {
+    	// Create admin user during application startup
+    	createAdminUser();
+    }
+    
 	List<User> allAdmins = new ArrayList<>();
 
 	
@@ -39,13 +47,14 @@ public class AdminController {
 		User adminUser = new User();
 		adminUser.setFirstName("Admin");
 		adminUser.setLastName("User");
-		adminUser.setEmail("admin@example.com");
+		adminUser.setEmail("admin@email.com");
 		adminUser.setPassword(passwordEncoder.encode("adminPassword"));
 //		adminUser.authority("ROLE_ADMIN");
 		
-		Authority adminAuth = new Authority(Role.ADMIN.name(), adminUser);
+		Authority adminAuth = new Authority("ROLE_ADMIN", adminUser);
 		
-		adminUser.setAuthorities(List.of(adminAuth));
+//		adminUser.setAuthorities(List.of(adminAuth));
+		adminUser.setAuthorities(Collections.singletonList(adminAuth));
 		
 		userRepo.save(adminUser);
 	}
