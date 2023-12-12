@@ -13,11 +13,17 @@ public class Authority implements GrantedAuthority {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Authority(String auth, User user) {
+    public Authority () {}
+
+    public Authority(String authority) {
+		super();
+		this.authority = authority;
+	}
+
+	public Authority(String auth, User user) {
         this.authority = auth;
         this.user = user;
     }
-    public Authority () {}
 
     @Override
 	public String toString() {
