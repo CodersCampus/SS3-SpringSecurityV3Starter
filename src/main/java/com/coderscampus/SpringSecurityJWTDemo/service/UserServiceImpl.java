@@ -108,4 +108,8 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserById(Integer userId) {
     	return userRepository.findById(userId);
     }
+    
+    public User updateUser(User user) {
+    	return userRepository.save(user);
+    }
 }
