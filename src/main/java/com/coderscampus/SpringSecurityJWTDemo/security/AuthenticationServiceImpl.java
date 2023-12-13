@@ -71,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
         String encodedPassword = passwordEncoder.encode(request.password());
-        logger.info("Raw Password: {}, Encoded Password: {}", request.password(), encodedPassword);
+        logger.info("Raw Password during registation: {}, Encoded Password during registation: {}", request.password(), encodedPassword);
         
         return new JwtAuthenticationResponse(jwt, refreshToken.getToken());
     }
@@ -85,8 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var jwt = jwtService.generateToken(user);
         var refreshTokenOpt = refreshTokenService.findByToken(jwt);
         
-        logger.info("Provided password during login: {}", request.password());
-        logger.info("Encoded password during login: {}", user.getPassword()); // Print the encoded password from the database
+        logger.info("Raw password during login: {}", "Encoded password during login: {}", request.password(), user.getPassword());
         
         if (refreshTokenOpt.isPresent()) {
             return new JwtAuthenticationResponse(jwt, refreshTokenOpt.get().getToken()); 
