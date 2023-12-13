@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
     
-    @Secured("ROLE_ADMIN")
+//    @Secured("ROLE_ADMIN")
     public void elevateUserToAdmin(Integer userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
@@ -95,5 +95,9 @@ public class UserServiceImpl implements UserService {
     
     public Optional<User> findUserById(Integer userId) {
     	return userRepository.findById(userId);
+    }
+    
+    public User updateUser(User user) {
+    	return userRepository.save(user);
     }
 }
