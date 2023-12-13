@@ -55,7 +55,6 @@ public class UserServiceImpl implements UserService {
 //    	return user;
 //    }
 
-//    @Override
     @Secured({"ROLE_ADMIN"})
     public List<User> findAll() {
         return userRepository.findAll();

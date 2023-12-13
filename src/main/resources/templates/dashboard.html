@@ -42,6 +42,13 @@
             font-size: 14px;
             cursor: pointer;
         }
+
+        .admin-badge {
+            background-color: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -72,12 +79,17 @@
                     <td>
                         <!-- Iterate over the list of authorities for the user -->
                         <span th:each="authority : ${user.authorities}" th:text="${authority.getAuthority()} + ' '"></span>
+                        <!-- <span th:each="authority : ${user.authorities}" th:text="${authority} + ' '"></span> -->
+
+                        <!-- <span th:if="${#lists.contains(user.authorities.![authority.authority], 'ADMIN')}" class="admin-badge">Admin</span> -->
+                        <span th:if="${#lists.contains(user.authorities, 'ADMIN')}" class="admin-badge">Admin</span>
                     </td>
                     <td>
                         <!-- Display elevate button only if the user is not already an admin -->
-                        <span th:unless="${user.authorities == 'ADMIN'}">
-                            <!-- <span th:unless="${#lists.contains(user.authorities.![authority.authority], 'ADMIN')}"></span> -->
-                            <button class="elevate-button" th:onclick="'/elevateRole/' + ${user.id}">Elevate to Admin</button>
+                        <!-- <span th:unless="${user.authorities == 'ADMIN'}"> -->
+                        <!-- <span th:unless="${#lists.contains(user.authorities.![authority.authority], 'ADMIN')}"> -->
+                        <span th:unless="${#lists.contains(user.authorities, 'ADMIN')}">
+                            <button class="elevate-button" th:onclick="'/admin/makeAdmin?userId=' + ${user.id}">Elevate to Admin</button>
                         </span>
                     </td>
                 </tr>
