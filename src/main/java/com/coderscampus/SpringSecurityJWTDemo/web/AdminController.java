@@ -9,6 +9,8 @@ import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 import jakarta.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,7 @@ public class AdminController {
     private UserServiceImpl userService;
     private UserRepository userRepo;
     private PasswordEncoder passwordEncoder;
+    private Logger logger = LoggerFactory.getLogger(AdminController.class);
     
     public AdminController(UserServiceImpl userService, UserRepository userRepo, PasswordEncoder passwordEncoder) {
 		super();
@@ -73,26 +76,16 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String getDashboard (ModelMap model) {
     	List<User> users = userService.findAll();
-    	model.addAttribute(users);
+    	model.addAttribute("userList", users);
     	return "dashboard";
     }
     
     @PostMapping("/makeAdmin")
     public ResponseEntity<String> elevateToAdmin (@RequestParam Integer userId) {
     	Optional<User> findUser = userService.findUserById(userId);
-    	
-    	if (findUser.isPresent()) {
-    		User user = findUser.get();
-    		
-    		Authority adminAuth = new Authority("ROLE_ADMIN");
-    		user.getAuthorities().add(adminAuth);
-    		userService.registerUser(user);
-    		
-    		return ResponseEntity.ok("User elevated to admin");
-    		
-    	} else {
-    		
-    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-    	}
+    	    	
+    	userService.elevateUserToAdmin(userId);
+    	logger.info("Processing elevation for user: {}", "Role: {}", findUser.get().getEmail(), findUser.get().getAuthorities());
+    	return ResponseEntity.ok("User elevated to admin");
     }
 }
