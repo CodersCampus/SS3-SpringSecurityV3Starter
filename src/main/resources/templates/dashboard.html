@@ -81,16 +81,21 @@
                         <span th:each="authority : ${user.authorities}" th:text="${authority.getAuthority()} + ' '"></span>
                         <!-- <span th:each="authority : ${user.authorities}" th:text="${authority} + ' '"></span> -->
 
-                        <!-- <span th:if="${#lists.contains(user.authorities.![authority.authority], 'ADMIN')}" class="admin-badge">Admin</span> -->
-                        <span th:if="${#lists.contains(user.authorities, 'ADMIN')}" class="admin-badge">Admin</span>
+                        <span th:if="${#lists.contains(user.authorities, 'ROLE_ADMIN')}" class="admin-badge">Admin</span>
                     </td>
                     <td>
+                        <span th:if="${#lists.contains(user.authorities, 'ROLE_ADMIN')}">
+                            <!-- Render an error message or log a message -->
+                            <p>Error: User already has ROLE_ADMIN</p>
+                        </span>
+
                         <!-- Display elevate button only if the user is not already an admin -->
                         <!-- <span th:unless="${user.authorities == 'ADMIN'}"> -->
-                        <!-- <span th:unless="${#lists.contains(user.authorities.![authority.authority], 'ADMIN')}"> -->
-                        <span th:unless="${#lists.contains(user.authorities, 'ADMIN')}">
-                            <button class="elevate-button" th:onclick="'/admin/makeAdmin?userId=' + ${user.id}">Elevate to Admin</button>
-                        </span>
+                        <form th:action="@{/admin/makeAdmin}" th:method="post">
+                            <input type="hidden" th:name="userId" th:value="${user.id}" />
+                            <button type="submit" class="elevate-button">Elevate to Admin</button>
+                        </form>
+                        
                     </td>
                 </tr>
             </tbody>
