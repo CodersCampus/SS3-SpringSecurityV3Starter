@@ -85,7 +85,8 @@ public class AdminController {
     	Optional<User> findUser = userService.findUserById(userId);
     	    	
     	userService.elevateUserToAdmin(userId);
-    	logger.info("Processing elevation for user: {}", "Role: {}", findUser.get().getEmail(), findUser.get().getAuthorities());
+    	logger.info("Processing elevation for user: {}", findUser.get().getEmail());
+    	logger.info("Role: {}", findUser.get().getAuthorities());
     	return ResponseEntity.ok("User elevated to admin");
     }
 }
