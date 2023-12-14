@@ -112,7 +112,7 @@ public class SecurityConfig {
 							
 							logger.error("Authentication failed for email: " + email);
 							logger.error("Authentication failed: " + exception.getMessage(), exception);
-							logger.info("Provided password during login: " + password);
+							logger.info("Raw password during login: " + password);
 					        logger.info("Encoded password during login: " + passwordEncoder().encode(password));
 							
 							response.sendRedirect("/error");
@@ -123,6 +123,9 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
                 	.logoutSuccessUrl("/signin")
+                	.deleteCookies("accessToken")
+                	.deleteCookies("refreshToken")
+                	.deleteCookies("JSESSIONID")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
