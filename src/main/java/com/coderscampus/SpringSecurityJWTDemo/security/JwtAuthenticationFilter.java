@@ -79,7 +79,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if  (accessTokenCookie != null ) {
         
         	int loginAttempt = 0;
-//        	String token = accessTokenCookie != null ? accessTokenCookie.getValue() : null;
 
         	while (loginAttempt <= 5) {
         		String token = accessTokenCookie.getValue();
