@@ -11,6 +11,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
+
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +38,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.io.IOException;
-import java.util.HashMap;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -64,9 +67,9 @@ public class SecurityConfig {
                                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                                         .requestMatchers("/products").authenticated()
-//                                        	.requestMatchers("/signin").permitAll()
-                                        	.requestMatchers("/register").permitAll()
-                                        	.anyRequest().permitAll()
+                                        .requestMatchers("/success").authenticated()
+                                        .requestMatchers("/register").permitAll()
+                                        .anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
 //                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -123,7 +126,8 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
                 	.logoutSuccessUrl("/signin")
-                	.deleteCookies("accessToken")
+                	// delete cookies from client after logout
+                	.deleteCookies("accessToken") 
                 	.deleteCookies("refreshToken")
                 	.deleteCookies("JSESSIONID")
                 	.invalidateHttpSession(true)
