@@ -76,8 +76,10 @@
                     <td>
                         <!-- Display elevate button only if the user is not already an admin -->
                         <span th:unless="${user.authorities == 'ADMIN'}">
-                            <!-- <span th:unless="${#lists.contains(user.authorities.![authority.authority], 'ADMIN')}"></span> -->
-                            <button class="elevate-button" th:onclick="'/elevateRole/' + ${user.id}">Elevate to Admin</button>
+                            <form th:action="@{/admin/makeAdmin}" th:method="post">
+                                <input type="hidden" th:name="userId" th:value="${user.id}" />
+                                <button type="submit" class="elevate-button">Elevate to Admin</button>
+                            </form>
                         </span>
                     </td>
                 </tr>
