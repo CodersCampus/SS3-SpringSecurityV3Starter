@@ -40,22 +40,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.authenticationManager = authenticationManager;
         this.refreshTokenService = refreshTokenService;
     }
-    
-//    @Autowired
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//    
-//    public AuthenticationServiceImpl(UserRepository userRepository, JwtService jwtService,
-//		AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService) {
-//	super();
-//	this.userRepository = userRepository;
-//	this.jwtService = jwtService;
-//	this.authenticationManager = authenticationManager;
-//	this.refreshTokenService = refreshTokenService;
-//}
-
-
 
 	@Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {

@@ -12,7 +12,8 @@ import com.coderscampus.SpringSecurityJWTDemo.domain.Product;
 
 @RestController
 public class ProductController {
-
+//	 THIS CONTROLLER IS FOR TESTING PURPOSES
+	
     List<Product> allProducts = new ArrayList<>();
     
     public ProductController () {

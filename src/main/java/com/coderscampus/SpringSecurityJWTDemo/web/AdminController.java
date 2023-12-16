@@ -42,9 +42,8 @@ public class AdminController {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-    @PostConstruct
+    @PostConstruct // This annotation is used to create an admin user during application startup
     public void init() {
-    	// Create admin user during application startup
     	createAdminUser();
     }
     
@@ -57,11 +56,8 @@ public class AdminController {
 		adminUser.setLastName("User");
 		adminUser.setEmail("admin@email.com");
 		adminUser.setPassword(passwordEncoder.encode("adminPassword"));
-//		adminUser.authority("ROLE_ADMIN");
 		
 		Authority adminAuth = new Authority("ROLE_ADMIN", adminUser);
-		
-//		adminUser.setAuthorities(List.of(adminAuth));
 		adminUser.setAuthorities(Collections.singletonList(adminAuth));
 		
 		userRepo.save(adminUser);

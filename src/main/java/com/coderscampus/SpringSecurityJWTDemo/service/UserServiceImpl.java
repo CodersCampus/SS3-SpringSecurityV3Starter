@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-//public class UserServiceImpl implements UserDetailsService {
 	
     private final UserRepository userRepository;
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -50,25 +49,14 @@ public class UserServiceImpl implements UserService {
         };
     }
     
-//    @Override
-//    public UserDetails loadUserByUsername(String username) {
-//    	User user = userRepository.findByEmail(username)
-//    			.orElseThrow(() -> new UsernameNotFoundException("User not found" + username));
-//    	
-//    	List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
-//    			.map(auth -> new SimpleGrantedAuthority(auth.getAuthority()))
-//    			.collect(Collectors.toList());
-//    	
-//    	return user;
-//    }
 
     @Secured({"ROLE_ADMIN"})
     public List<User> findAll() {
         return userRepository.findAll();
     }
     
-//    @Secured("ROLE_ADMIN")
-    @Transactional
+    @Secured("ROLE_ADMIN")
+    @Transactional // This annotation ensures that changes are committed to the database
     public void elevateUserToAdmin(Integer userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
 
@@ -95,7 +83,7 @@ public class UserServiceImpl implements UserService {
     
     public User registerUser(User user) {
 		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-//			throw new UserAlreadyExistsException("A user with this email already exists");
+
 			return null;
 		}
 		return userRepository.save(user);

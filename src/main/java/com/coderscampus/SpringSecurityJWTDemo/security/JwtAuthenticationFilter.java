@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -41,18 +43,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtServiceImpl jwtService;
-    private final UserServiceImpl userService;
-    private final RefreshTokenService refreshTokenService;
+	private final JwtServiceImpl jwtService;
+	private final UserServiceImpl userService;
+	private final RefreshTokenService refreshTokenService;
+	private Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
+	public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserServiceImpl userService,
 			RefreshTokenService refreshTokenService) {
 		super();
 		this.jwtService = jwtService;
 		this.userService = userService;
 		this.refreshTokenService = refreshTokenService;
 	}
-
 
 	@Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -75,11 +77,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         	}
         }
         
-        
         if  (accessTokenCookie != null ) {
         
         	int loginAttempt = 0;
-//        	String token = accessTokenCookie != null ? accessTokenCookie.getValue() : null;
 
         	while (loginAttempt <= 5) {
         		String token = accessTokenCookie.getValue();
@@ -118,6 +118,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         		loginAttempt++;
         	}
         }
+        logger.debug("Request URI: {}", request.getRequestURI());
+        logger.debug("Auth Header: {}", authHeader);
+        logger.debug("Access Token Cookie: {}", accessTokenCookie);
+        logger.debug("Refresh Token Cookie: {}", refreshTokenCookie);
+        
         filterChain.doFilter(request, response);
 
 	}

@@ -69,7 +69,7 @@
       <label for="confirmPassword"><b>Confirm Password</b></label>
       <input type="password" placeholder="Confirm Password *" name="confirmPassword" id="confirmPassword"
         class="required" required>
-        <div id="passwordMatchMessage" style="color: red;"></div>
+      <div id="passwordMatchMessage" style="color: red;"></div>
       <button type="submit">Register</button>
     </form>
   </div>
@@ -86,9 +86,9 @@
         passwordMatchMessage.textContent = 'Passwords do not match!';
         // alert('Passwords do not match!');
         event.preventDefault(); // Prevent form submission
-      }else {
-    passwordMatchMessage.textContent = ''; // Clear previous message
-  }
+      } else {
+        passwordMatchMessage.textContent = ''; // Clear previous message
+      }
     });
 
     /*]]>*/

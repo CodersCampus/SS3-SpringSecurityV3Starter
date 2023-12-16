@@ -33,18 +33,13 @@ import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 @Controller
 public class RegistrationController {
-	
-	private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
-	
-//	private PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
 
 	private UserServiceImpl userService;
 	private AuthenticationServiceImpl authenticationService;
 	private JwtServiceImpl jwtService;
 	private RefreshTokenService refreshTokenService;
 	private PasswordEncoder passwordEncoder;
+	private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
 	
 	public RegistrationController(UserServiceImpl userService, AuthenticationServiceImpl authenticationService,
@@ -94,9 +89,14 @@ public class RegistrationController {
 	        }
 	    }
 	}
+	/*
+	 * This code is from Trevor's original implementation which might be helpful for
+	 * those who are not using server rendering templates
+	 * 
+	 * @PostMapping("/signup") 
+	 * public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody SignUpRequest request) { 
+	 * return ResponseEntity.ok(authenticationService.signup(request)); 
+	 * }
+	 */
 
-//  @PostMapping("/signup")
-//  public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody SignUpRequest request) {
-//      return ResponseEntity.ok(authenticationService.signup(request));
-//  }
 

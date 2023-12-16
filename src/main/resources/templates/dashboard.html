@@ -42,13 +42,6 @@
             font-size: 14px;
             cursor: pointer;
         }
-
-        .admin-badge {
-            background-color: #4CAF50;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
     </style>
 </head>
 
@@ -79,23 +72,15 @@
                     <td>
                         <!-- Iterate over the list of authorities for the user -->
                         <span th:each="authority : ${user.authorities}" th:text="${authority.getAuthority()} + ' '"></span>
-                        <!-- <span th:each="authority : ${user.authorities}" th:text="${authority} + ' '"></span> -->
-
-                        <span th:if="${#lists.contains(user.authorities, 'ROLE_ADMIN')}" class="admin-badge">Admin</span>
                     </td>
                     <td>
-                        <span th:if="${#lists.contains(user.authorities, 'ROLE_ADMIN')}">
-                            <!-- Render an error message or log a message -->
-                            <p>Error: User already has ROLE_ADMIN</p>
-                        </span>
-
                         <!-- Display elevate button only if the user is not already an admin -->
-                        <!-- <span th:unless="${user.authorities == 'ADMIN'}"> -->
-                        <form th:action="@{/admin/makeAdmin}" th:method="post">
-                            <input type="hidden" th:name="userId" th:value="${user.id}" />
-                            <button type="submit" class="elevate-button">Elevate to Admin</button>
-                        </form>
-                        
+                        <span th:unless="${user.authorities == 'ADMIN'}">
+                            <form th:action="@{/admin/makeAdmin}" th:method="post">
+                                <input type="hidden" th:name="userId" th:value="${user.id}" />
+                                <button type="submit" class="elevate-button">Elevate to Admin</button>
+                            </form>
+                        </span>
                     </td>
                 </tr>
             </tbody>
