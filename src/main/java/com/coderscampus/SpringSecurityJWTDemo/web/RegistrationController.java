@@ -33,18 +33,13 @@ import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 @Controller
 public class RegistrationController {
-	
-	private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
-	
-//	private PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
 
 	private UserServiceImpl userService;
 	private AuthenticationServiceImpl authenticationService;
 	private JwtServiceImpl jwtService;
 	private RefreshTokenService refreshTokenService;
 	private PasswordEncoder passwordEncoder;
+	private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
 	
 	public RegistrationController(UserServiceImpl userService, AuthenticationServiceImpl authenticationService,
@@ -72,14 +67,14 @@ public class RegistrationController {
 	    
 
 	    if (existingUser.isPresent()) {
-	    	logger.info("User already exists. Redirecting to userExists.");
+	    	logger.error("User already exists. Redirecting to userExists.");
 	        // Redirect to the userExists page if a user with the same email exists
 	        return "userExists";
 	    } else {
 	    	JwtAuthenticationResponse signupResponse = authenticationService.signup(request);
-	    	logger.info("This data is from the ProcessRegistration in the RegistrationController");
+	    	
 	    	logger.info("Processing registration for user: " + user.getEmail());
-	    	logger.error("Provided password during registration: " + request.password());
+	    	logger.info("Provided password during registration: " + request.password());
 	    	logger.info("Encoded password during registration: " + encodedPassword);
 			
 	        if (signupResponse != null) {
@@ -88,15 +83,20 @@ public class RegistrationController {
 	                return "login";
 	            } else {
 	                // Handle the case where authentication is not successful
-	            	logger.info("User registration failed. Redirecting to error.");
+	            	logger.error("User registration failed. Redirecting to error.");
 	                return "error";
 	            }
 	        }
 	    }
 	}
+	/*
+	 * This code is from Trevor's original implementation which might be helpful for
+	 * those who are not using server rendering templates
+	 * 
+	 * @PostMapping("/signup") 
+	 * public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody SignUpRequest request) { 
+	 * return ResponseEntity.ok(authenticationService.signup(request)); 
+	 * }
+	 */
 
-//  @PostMapping("/signup")
-//  public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody SignUpRequest request) {
-//      return ResponseEntity.ok(authenticationService.signup(request));
-//  }
 

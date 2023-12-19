@@ -11,6 +11,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
+
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +38,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.io.IOException;
-import java.util.HashMap;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -64,9 +67,9 @@ public class SecurityConfig {
                                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                                         .requestMatchers("/products").authenticated()
-//                                        	.requestMatchers("/signin").permitAll()
-                                        	.requestMatchers("/register").permitAll()
-                                        	.anyRequest().permitAll()
+                                        .requestMatchers("/success").authenticated()
+                                        .requestMatchers("/register").permitAll()
+                                        .anyRequest().permitAll()
                         )
                 .headers(header -> header.frameOptions(frameOption -> frameOption.disable()))
 //                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -91,9 +94,14 @@ public class SecurityConfig {
 					    	Cookie accessTokenCookie = CookieUtils.createAccessTokenCookie(accessToken);
 					    	Cookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(refreshToken.getToken());
 					    	
-							logger.info("successful authentication for: " + user.getUsername());
-					    	System.out.println("Access Cookie: " + accessTokenCookie);
-//					    	
+							logger.info("Successful authentication for: " + user.getUsername());
+							logger.info("Access Cookie: " + accessTokenCookie.getValue());
+							logger.info("Refresh Cookie: " + refreshTokenCookie.getValue());
+					    	logger.info("Role for " + user.getUsername() + " is: " + user.authority(accessToken).toString());
+							logger.info("Successful authentication for: " + user.getUsername());
+							logger.info("Access Cookie: " + accessTokenCookie.getValue());
+							logger.info("Refresh Cookie: " + refreshTokenCookie.getValue());
+					    	logger.info("Role for " + user.getUsername() + " is: " + user.authority(accessToken).toString());
 //					    	
 					    	response.addCookie(accessTokenCookie);
 							response.addCookie(refreshTokenCookie);
@@ -111,8 +119,8 @@ public class SecurityConfig {
 							
 							logger.error("Authentication failed for email: " + email);
 							logger.error("Authentication failed: " + exception.getMessage(), exception);
-							logger.error("Provided password during login: " + password);
-					        logger.error("Encoded password during login: " + passwordEncoder().encode(password));
+							logger.info("Raw password during login: " + password);
+					        logger.info("Encoded password during login: " + passwordEncoder().encode(password));
 							
 							response.sendRedirect("/error");
 						}
@@ -122,6 +130,10 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> {logoutConfigurer
                 	.logoutUrl("/logout")
                 	.logoutSuccessUrl("/signin")
+                	// delete cookies from client after logout
+                	.deleteCookies("accessToken") 
+                	.deleteCookies("refreshToken")
+                	.deleteCookies("JSESSIONID")
                 	.invalidateHttpSession(true)
                 	.clearAuthentication(true);
                 });
@@ -143,7 +155,6 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userService.userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         
-        logger.info("This data is from the AuthenticationProvider in the SecurityConfig Class");
         logger.info("UserDetailsService: " + userDetailsService);
         logger.info("PasswordEncoder: " + passwordEncoder);
         

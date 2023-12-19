@@ -69,7 +69,7 @@
       <label for="confirmPassword"><b>Confirm Password</b></label>
       <input type="password" placeholder="Confirm Password *" name="confirmPassword" id="confirmPassword"
         class="required" required>
-
+      <div id="passwordMatchMessage" style="color: red;"></div>
       <button type="submit">Register</button>
     </form>
   </div>
@@ -80,10 +80,14 @@
     document.getElementById('registrationForm').addEventListener('submit', function (event) {
       var password = document.getElementById('password').value;
       var confirmPassword = document.getElementById('confirmPassword').value;
+      var passwordMatchMessage = document.getElementById('passwordMatchMessage');
 
       if (password !== confirmPassword) {
-        alert('Passwords do not match!');
+        passwordMatchMessage.textContent = 'Passwords do not match!';
+        // alert('Passwords do not match!');
         event.preventDefault(); // Prevent form submission
+      } else {
+        passwordMatchMessage.textContent = ''; // Clear previous message
       }
     });
 

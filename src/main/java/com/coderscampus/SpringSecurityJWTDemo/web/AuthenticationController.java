@@ -52,12 +52,6 @@ public class AuthenticationController {
 		return "login";
 	}
     
-
-//    @GetMapping("/signin")
-//    public String getLogin() {
-//    	return "login";
-//    }
-    
     @GetMapping("/login-error")
     public String loginError (Model model) {
     	model.addAttribute("loginError", true);
@@ -68,40 +62,26 @@ public class AuthenticationController {
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SignInRequest request, @RequestBody User user) {
     	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//    	User loggedUser = ((User) userService).loadUserByUsername(user.getUsername());
+
     	String accessToken = jwtService.generateToken(user);
     	
         return ResponseEntity.ok(authenticationService.signin(request));
-//    	User loggedUser = (User) userService.userDetailsService().loadUserByUsername(user.getUsername());
-    	
-    	// moving the below to the SecurityConfig SecFilterChain:
-//    	String accessToken = jwtService.generateToken(loggedUser);
-//    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(loggedUser.getId());
-    	
-//        return ResponseEntity.ok(authenticationService.signin(request));
-//    	return ResponseEntity.ok(new JwtAuthenticationResponse(accessToken, refreshToken.getToken()));
+
     }
 
     
-//    @PostMapping("/signin")
-//    public String authenticateLogin (@ModelAttribute("user") User user, SignInRequest request) {
-//    	Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
-//    	User loggedUser = ((User) userService).loadUserByUsername(user.getUsername());
-//    	String accessToken = jwtService.generateToken(user);
-//    	
-//        return ResponseEntity.ok(authenticationService.signin(request));
-//    }
+	/*
+	 * This code is from Trevor's original implementation which might be helpful for those who are not using server rendering templates
+	 * 
+	 * @PostMapping("/signin") public String authenticateLogin
+	 * (@ModelAttribute("user") User user, SignInRequest request) { 
+	 * Optional<User> existingUser = userService.findUserByEmail(user.getEmail()); 
+	 * User loggedUser = ((User) userService).loadUserByUsername(user.getUsername()); 
+	 * String accessToken = jwtService.generateToken(user);
+	 * 
+	 * return ResponseEntity.ok(authenticationService.signin(request)); }
+	 */
     
-//    @PostMapping("/signin")
-//    public ModelAndView authenticateLogin(@RequestBody User user, SignInRequest request) {
-//    	Optional<User> loggedUser = userService.findUserByEmail(user.getEmail());
-//    	
-//    	String accessToken = jwtService.generateToken(user);
-//    	
-//    	RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-//    	
-//    	return new ModelAndView(new RedirectView("/success"));
-//    }
     
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(@RequestBody RefreshTokenRequest request) {
