@@ -1,24 +1,17 @@
 package com.coderscampus.SpringSecurityJWTDemo.web;
 
-import java.util.HashMap;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignInRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.request.RefreshTokenRequest;
+import com.coderscampus.SpringSecurityJWTDemo.dao.request.SignInRequest;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.JwtAuthenticationResponse;
 import com.coderscampus.SpringSecurityJWTDemo.dao.response.TokenRefreshResponse;
 import com.coderscampus.SpringSecurityJWTDemo.domain.RefreshToken;
@@ -29,7 +22,7 @@ import com.coderscampus.SpringSecurityJWTDemo.service.RefreshTokenService;
 import com.coderscampus.SpringSecurityJWTDemo.service.UserServiceImpl;
 
 //@RestController
-//@RequestMapping("/api/v1/auth")
+//@RequestMapping("/api/v1/auth") 
 @Controller
 public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
